@@ -32,11 +32,11 @@
 - 因而 repo-level truthful closure 不是“shared blocker 还在”，而是“shared blocker 已拆，row-local truth 已分别落定”。
 
 ## evidence refs
-1. `/Users/xlx/.openclaw/workspace/reports/2026-04-16-loop9-v4-strict-isolated-repo-complete/rounds/buildadmin/r1-fresh-repo-complete/objects/learning-delta.buildadmin.r1-fresh-repo-complete.md`
-2. `/Users/xlx/.openclaw/workspace/reports/2026-04-16-loop9-v4-strict-isolated-repo-complete/rounds/buildadmin/r1-fresh-repo-complete/objects/stage-verdict.env-bootstrap.buildadmin.auth-material.r1-fresh-repo-complete.md`
-3. `/Users/xlx/.openclaw/workspace/reports/2026-04-16-loop9-v4-strict-isolated-repo-complete/rounds/buildadmin/r1-fresh-repo-complete/objects/stage-verdict.finding-replay.buildadmin.B3-reopen.r1-fresh-repo-complete.md`
-4. `/Users/xlx/.openclaw/workspace/reports/2026-04-16-loop9-v4-strict-isolated-repo-complete/rounds/buildadmin/r1-fresh-repo-complete/objects/stage-verdict.finding-replay.buildadmin.B5-reopen.r1-fresh-repo-complete.md`
-5. `/Users/xlx/.openclaw/workspace/reports/2026-04-16-loop9-v4-strict-isolated-repo-complete/rounds/buildadmin/r1-fresh-repo-complete/objects/stage-verdict.finding-replay.buildadmin.B6-reopen.r1-fresh-repo-complete.md`
+1. `~/.openclaw/workspace/reports/2026-04-16-loop9-v4-strict-isolated-repo-complete/rounds/buildadmin/r1-fresh-repo-complete/objects/learning-delta.buildadmin.r1-fresh-repo-complete.md`
+2. `~/.openclaw/workspace/reports/2026-04-16-loop9-v4-strict-isolated-repo-complete/rounds/buildadmin/r1-fresh-repo-complete/objects/stage-verdict.env-bootstrap.buildadmin.auth-material.r1-fresh-repo-complete.md`
+3. `~/.openclaw/workspace/reports/2026-04-16-loop9-v4-strict-isolated-repo-complete/rounds/buildadmin/r1-fresh-repo-complete/objects/stage-verdict.finding-replay.buildadmin.B3-reopen.r1-fresh-repo-complete.md`
+4. `~/.openclaw/workspace/reports/2026-04-16-loop9-v4-strict-isolated-repo-complete/rounds/buildadmin/r1-fresh-repo-complete/objects/stage-verdict.finding-replay.buildadmin.B5-reopen.r1-fresh-repo-complete.md`
+5. `~/.openclaw/workspace/reports/2026-04-16-loop9-v4-strict-isolated-repo-complete/rounds/buildadmin/r1-fresh-repo-complete/objects/stage-verdict.finding-replay.buildadmin.B6-reopen.r1-fresh-repo-complete.md`
 
 ## no-overclaim note
 - 这条 delta 不是鼓励为了一组 rows 去做厚重 env 工程

@@ -60,11 +60,11 @@
 例如：
 
 ```text
-/loop9-wrapped-audit ~/.openclaw/workspace/targets/pikachu
+/loop9-wrapped-audit /absolute/path/to/local/repo
 ```
 
 ```text
-/loop9-wrapped-audit --policy weibu-submission ~/.openclaw/workspace/targets/pikachu
+/loop9-wrapped-audit --policy weibu-submission /absolute/path/to/local/repo
 ```
 
 ---
@@ -151,7 +151,7 @@ cd ~/.openclaw/workspace/Super8
 
 ## 当前已验证可用的现实情况
 
-以 Pikachu 为例，command 路线已经证明：
+以一个本地示例目标为例，command 路线已经证明：
 
 - 可以长时间运行
 - 可以完成 repo 结构探索

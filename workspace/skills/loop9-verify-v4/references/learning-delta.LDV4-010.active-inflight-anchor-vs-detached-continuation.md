@@ -34,13 +34,13 @@
 - 或把 `repo-round-verdict` 之后的未消费 tail 伪装成“以后再聊也行”的软停点。
 
 ## evidence refs
-1. `/Users/xlx/.openclaw/workspace/skills/loop9-verify-v4/SKILL.md`
-2. `/Users/xlx/.openclaw/workspace/skills/loop9-verify-v4/references/repo-selection.md`
-3. `/Users/xlx/.openclaw/workspace/skills/loop9-verify-v4/references/repo-selection-pack.md`
-4. `/Users/xlx/.openclaw/workspace/skills/loop9-verify-v4/references/parent-closure-chain.md`
-5. `/Users/xlx/.openclaw/workspace/skills/loop9-verify-v4/references/runtime-isolation.md`
-6. `/Users/xlx/.openclaw/workspace/reports/2026-04-17-loop9-v4-tencent-cvm-sparkshop-followup/intake/repo-selection-proposal.sparkshop.r1-active-tencent-cvm-followup.md`
-7. `/Users/xlx/.openclaw/workspace/reports/2026-04-17-loop9-v4-tencent-cvm-sparkshop-followup/intake/parent-selection-acceptance.sparkshop.r1-active-tencent-cvm-followup.md`
+1. `~/.openclaw/workspace/skills/loop9-verify-v4/SKILL.md`
+2. `~/.openclaw/workspace/skills/loop9-verify-v4/references/repo-selection.md`
+3. `~/.openclaw/workspace/skills/loop9-verify-v4/references/repo-selection-pack.md`
+4. `~/.openclaw/workspace/skills/loop9-verify-v4/references/parent-closure-chain.md`
+5. `~/.openclaw/workspace/skills/loop9-verify-v4/references/runtime-isolation.md`
+6. `~/.openclaw/workspace/reports/2026-04-17-loop9-v4-tencent-cvm-sparkshop-followup/intake/repo-selection-proposal.sparkshop.r1-active-tencent-cvm-followup.md`
+7. `~/.openclaw/workspace/reports/2026-04-17-loop9-v4-tencent-cvm-sparkshop-followup/intake/parent-selection-acceptance.sparkshop.r1-active-tencent-cvm-followup.md`
 
 ## level judgment
 - current_level: `observed`

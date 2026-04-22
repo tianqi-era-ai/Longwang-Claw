@@ -51,7 +51,7 @@ cd ~/.openclaw/workspace/Super8
 用户：
 
 ```text
-/loop9-wrapped-audit ~/.openclaw/workspace/targets/pikachu
+/loop9-wrapped-audit /absolute/path/to/local/repo
 ```
 
 系统行为：

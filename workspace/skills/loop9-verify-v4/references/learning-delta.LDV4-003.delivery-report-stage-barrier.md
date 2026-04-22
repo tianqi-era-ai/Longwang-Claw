@@ -22,11 +22,11 @@
 - 正确的机制层修复不是“记住以后不要并发”而已，而是让 consumer 先看 bridge barrier：若上游 receipt 还未 ready，就进入 waiting，而不是落成假 blocker。
 
 ## evidence refs
-1. `/Users/xlx/.openclaw/workspace/skills/loop9-verify-v4/references/parent-closure-chain.md`
-2. `/Users/xlx/.openclaw/workspace/skills/loop9-verify-v4/references/stage-chain.md`
-3. `/Users/xlx/.openclaw/workspace/skills/loop9-delivery-reports/SKILL.md`
-4. `/Users/xlx/.openclaw/workspace/skills/loop9-delivery-reports/scripts/run_delivery_report_bridge.py`
-5. `/Users/xlx/.openclaw/workspace/skills/loop9-delivery-reports/scripts/run_final_local_review_bridge.py`
+1. `~/.openclaw/workspace/skills/loop9-verify-v4/references/parent-closure-chain.md`
+2. `~/.openclaw/workspace/skills/loop9-verify-v4/references/stage-chain.md`
+3. `~/.openclaw/workspace/skills/loop9-delivery-reports/SKILL.md`
+4. `~/.openclaw/workspace/skills/loop9-delivery-reports/scripts/run_delivery_report_bridge.py`
+5. `~/.openclaw/workspace/skills/loop9-delivery-reports/scripts/run_final_local_review_bridge.py`
 
 ## no-overclaim note
 - 这条 delta 当前只停在 `observed`

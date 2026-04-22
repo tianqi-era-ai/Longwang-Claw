@@ -34,10 +34,10 @@ The lesson is:
 - and make seed/config readiness explicit before judging an action-style finding
 
 ## Evidence refs
-1. `/Users/xlx/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-finding-replay/rounds/sparkshop/F2-r1-ai-native-minimal/objects/attempt-receipt.sparkshop.F2-r1-ai-native-minimal.md`
-2. `/Users/xlx/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-env-bootstrap/rounds/sparkshop/r16-remote-draft-bootstrap-full-sql-file-import/env_result.json`
-3. `/Users/xlx/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-env-bootstrap/rounds/sparkshop/r16-remote-draft-bootstrap-full-sql-file-import/artifacts/post_install_remediation_report.json`
-4. `/Users/xlx/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-finding-replay/rounds/sparkshop/F2-r2-ai-native-minimal-r16-receipt/objects/attempt-receipt.sparkshop.F2-r2-ai-native-minimal-r16-receipt.md`
+1. `~/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-finding-replay/rounds/sparkshop/F2-r1-ai-native-minimal/objects/attempt-receipt.sparkshop.F2-r1-ai-native-minimal.md`
+2. `~/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-env-bootstrap/rounds/sparkshop/r16-remote-draft-bootstrap-full-sql-file-import/env_result.json`
+3. `~/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-env-bootstrap/rounds/sparkshop/r16-remote-draft-bootstrap-full-sql-file-import/artifacts/post_install_remediation_report.json`
+4. `~/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-finding-replay/rounds/sparkshop/F2-r2-ai-native-minimal-r16-receipt/objects/attempt-receipt.sparkshop.F2-r2-ai-native-minimal-r16-receipt.md`
 
 ## Level judgment
 - current judgment: `observed`

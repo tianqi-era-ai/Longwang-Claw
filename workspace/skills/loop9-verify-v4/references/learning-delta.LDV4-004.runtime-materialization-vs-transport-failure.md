@@ -26,10 +26,10 @@
 - 在补齐这些 runtime material 之后，`F1 / F2 / F3` 都拿到了 fresh live receipt。
 
 ## evidence refs
-1. `/Users/xlx/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/objects/attempt-receipt.dwsurvey.F1.r1-fresh-repo-complete.md`
-2. `/Users/xlx/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/objects/attempt-receipt.dwsurvey.F2.r1-fresh-repo-complete.md`
-3. `/Users/xlx/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/objects/attempt-receipt.dwsurvey.F3.r1-fresh-repo-complete.md`
-4. `/Users/xlx/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/objects/repo-closure-review.dwsurvey.r1-fresh-repo-complete.md`
+1. `~/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/objects/attempt-receipt.dwsurvey.F1.r1-fresh-repo-complete.md`
+2. `~/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/objects/attempt-receipt.dwsurvey.F2.r1-fresh-repo-complete.md`
+3. `~/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/objects/attempt-receipt.dwsurvey.F3.r1-fresh-repo-complete.md`
+4. `~/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/objects/repo-closure-review.dwsurvey.r1-fresh-repo-complete.md`
 
 ## no-overclaim note
 - 这条 delta 不是说“所有失败都应该自动重试到成功”

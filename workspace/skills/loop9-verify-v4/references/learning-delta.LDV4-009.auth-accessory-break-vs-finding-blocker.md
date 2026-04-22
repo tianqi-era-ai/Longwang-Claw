@@ -37,9 +37,9 @@ The narrower lesson is:
 - and freeze the finding from the protected route's decisive blocker when that blocker is now observable
 
 ## Evidence refs
-1. `/Users/xlx/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-finding-replay/rounds/sparkshop/F3-r1-ai-native-minimal-r16/objects/attempt-receipt.sparkshop.F3-r1-ai-native-minimal-r16.md`
-2. `/Users/xlx/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-finding-replay/rounds/sparkshop/F3-r1-ai-native-minimal-r16/artifacts/logs/admin-ueditor.sparkshop.F3.r16.runtime.log`
-3. `/Users/xlx/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-finding-replay/rounds/sparkshop/F3-r1-ai-native-minimal-r16/artifacts/logs/admin-ueditor.sparkshop.F3.r16.summary.log`
+1. `~/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-finding-replay/rounds/sparkshop/F3-r1-ai-native-minimal-r16/objects/attempt-receipt.sparkshop.F3-r1-ai-native-minimal-r16.md`
+2. `~/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-finding-replay/rounds/sparkshop/F3-r1-ai-native-minimal-r16/artifacts/logs/admin-ueditor.sparkshop.F3.r16.runtime.log`
+3. `~/.openclaw/workspace/reports/2026-04-16-loop9-v4-tencent-cvm-finding-replay/rounds/sparkshop/F3-r1-ai-native-minimal-r16/artifacts/logs/admin-ueditor.sparkshop.F3.r16.summary.log`
 
 ## Level judgment
 - current judgment: `observed`

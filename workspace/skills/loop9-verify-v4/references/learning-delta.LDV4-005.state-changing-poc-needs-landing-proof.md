@@ -25,10 +25,10 @@
   - API 另有一个“误导性 success response shell”实现问题
 
 ## evidence refs
-1. `/Users/xlx/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/objects/attempt-receipt.dwsurvey.F4.r1-fresh-repo-complete.md`
-2. `/Users/xlx/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/artifacts/replay-active-unblock/F4.serial.before.txt`
-3. `/Users/xlx/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/artifacts/replay-active-unblock/F4.serial.after-non-owner.txt`
-4. `/Users/xlx/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/artifacts/replay-active-unblock/F4.serial.after-owner.txt`
+1. `~/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/objects/attempt-receipt.dwsurvey.F4.r1-fresh-repo-complete.md`
+2. `~/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/artifacts/replay-active-unblock/F4.serial.before.txt`
+3. `~/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/artifacts/replay-active-unblock/F4.serial.after-non-owner.txt`
+4. `~/.openclaw/workspace/reports/2026-04-15-loop9-v4-dwsurvey-repo-complete/rounds/dwsurvey/r1-fresh-repo-complete/artifacts/replay-active-unblock/F4.serial.after-owner.txt`
 
 ## no-overclaim note
 - 这条 delta 不是要求所有 PoC 都必须下钻到 SQL 层

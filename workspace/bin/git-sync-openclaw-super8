@@ -1,0 +1,233 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+OPENCLAW_REPO="${OPENCLAW_REPO:-${HOME}/.openclaw}"
+SUPER8_REPO="${SUPER8_REPO:-${HOME}/.openclaw/workspace/Super8}"
+
+hr() {
+  printf '%s\n' '============================================================'
+}
+
+format_bytes() {
+  local bytes="${1:-0}"
+  local -a units=(B KiB MiB GiB TiB)
+  local unit_index=0
+  local whole="$bytes"
+  local remainder=0
+
+  while (( whole >= 1024 && unit_index < ${#units[@]} - 1 )); do
+    remainder=$(( whole % 1024 ))
+    whole=$(( whole / 1024 ))
+    unit_index=$(( unit_index + 1 ))
+  done
+
+  if (( unit_index == 0 )); then
+    printf '%d %s' "$whole" "${units[$unit_index]}"
+  else
+    local decimal=$(( remainder * 10 / 1024 ))
+    printf '%d.%d %s' "$whole" "$decimal" "${units[$unit_index]}"
+  fi
+}
+
+repo_worktree_stats() {
+  local repo_path="$1"
+  python3 - "$repo_path" <<'PY'
+import os
+import subprocess
+import sys
+
+repo = sys.argv[1]
+lines = subprocess.check_output(
+    ["git", "-C", repo, "status", "--porcelain=v1"],
+    text=True,
+).splitlines()
+paths = []
+for line in lines:
+    if len(line) < 4:
+        continue
+    path = line[3:]
+    if " -> " in path:
+        path = path.split(" -> ", 1)[1]
+    paths.append(path)
+
+total = 0
+for path in paths:
+    full_path = os.path.join(repo, path)
+    if not os.path.exists(full_path):
+        continue
+    if os.path.isdir(full_path):
+        for root, _, files in os.walk(full_path):
+            for name in files:
+                file_path = os.path.join(root, name)
+                try:
+                    total += os.path.getsize(file_path)
+                except OSError:
+                    pass
+    else:
+        try:
+            total += os.path.getsize(full_path)
+        except OSError:
+            pass
+
+print(f"{len(paths)}\t{total}")
+PY
+}
+
+run_step() {
+  local step_label="$1"
+  local command_label="$2"
+  shift 2
+
+  local step_output step_status elapsed_start elapsed
+  echo "$step_label"
+  echo "Command: $command_label"
+  elapsed_start=$SECONDS
+
+  set +e
+  step_output="$("$@" 2>&1)"
+  step_status=$?
+  set -e
+
+  elapsed=$((SECONDS - elapsed_start))
+  if [[ -n "$step_output" ]]; then
+    printf '%s\n' "$step_output"
+  else
+    echo "(no output)"
+  fi
+  echo "Duration: ${elapsed}s"
+
+  return "$step_status"
+}
+
+usage() {
+  cat <<'EOF'
+Usage:
+  git-sync-openclaw-super8 [commit message...]
+  git-sync-openclaw-super8 -m "commit message"
+
+Behavior:
+  - Runs git pull --rebase --autostash, git add -A, git commit, and git push in both repos:
+    1) ~/.openclaw
+    2) ~/.openclaw/workspace/Super8
+  - Prints clear per-step progress: pull / add / commit / push
+  - Prints pending path count + approximate size before staging
+  - If no commit message is provided, uses an auto-generated timestamped message.
+  - Always prints a clear per-repo result summary.
+
+Optional env overrides:
+  - OPENCLAW_REPO=/path/to/repo
+  - SUPER8_REPO=/path/to/repo
+EOF
+}
+
+commit_message=""
+if [[ $# -gt 0 ]]; then
+  case "$1" in
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    -m|--message)
+      shift
+      if [[ $# -eq 0 ]]; then
+        echo "Error: -m/--message requires a commit message." >&2
+        exit 1
+      fi
+      commit_message="$1"
+      shift || true
+      if [[ $# -gt 0 ]]; then
+        commit_message+=" $*"
+      fi
+      ;;
+    *)
+      commit_message="$*"
+      ;;
+  esac
+fi
+
+if [[ -z "$commit_message" ]]; then
+  commit_message="chore: sync openclaw + Super8 ($(date '+%Y-%m-%d %H:%M:%S %z'))"
+fi
+
+run_repo() {
+  local repo_path="$1"
+  local repo_label="$2"
+
+  if [[ ! -d "$repo_path/.git" ]]; then
+    hr
+    echo "[FAILED] $repo_label"
+    echo "Path: $repo_path"
+    echo "Reason: not a git repository"
+    return 1
+  fi
+
+  hr
+  echo "[$repo_label]"
+  echo "Path: $repo_path"
+
+  local branch upstream before_head after_head committed
+  local pending_count pending_bytes pending_size
+
+  branch="$(git -C "$repo_path" branch --show-current)"
+  before_head="$(git -C "$repo_path" rev-parse --short HEAD)"
+  upstream="$(git -C "$repo_path" rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || true)"
+  IFS=$'\t' read -r pending_count pending_bytes < <(repo_worktree_stats "$repo_path")
+  pending_size="$(format_bytes "$pending_bytes")"
+
+  echo "Branch: ${branch:-DETACHED}"
+  echo "Upstream: ${upstream:-<none>}"
+  echo "Before HEAD: $before_head"
+  echo "Pending Before Add: ${pending_count} path(s), approx ${pending_size} (${pending_bytes} bytes)"
+
+  if ! run_step "[STEP 1/4] Pull" "git pull --rebase --autostash" git -C "$repo_path" pull --rebase --autostash; then
+    hr
+    echo "[FAILED] $repo_label"
+    echo "Failed Step: pull"
+    if [[ -z "$upstream" ]]; then
+      echo "Hint: current branch has no upstream tracking branch."
+      echo "Hint: set upstream first, or switch to a tracked branch."
+    fi
+    return 1
+  fi
+
+  if ! run_step "[STEP 2/4] Staging" "git add -A" git -C "$repo_path" add -A; then
+    hr
+    echo "[FAILED] $repo_label"
+    echo "Failed Step: staging"
+    return 1
+  fi
+
+  if git -C "$repo_path" diff --cached --quiet; then
+    committed="no"
+    after_head="$before_head"
+    echo "[STEP 3/4] Commit"
+    echo "Command: git commit -m \"$commit_message\""
+    echo "Commit: skipped (no staged changes after git add -A)"
+  else
+    committed="yes"
+    if ! run_step "[STEP 3/4] Commit" "git commit -m \"$commit_message\"" git -C "$repo_path" commit -m "$commit_message"; then
+      hr
+      echo "[FAILED] $repo_label"
+      echo "Failed Step: commit"
+      return 1
+    fi
+    after_head="$(git -C "$repo_path" rev-parse --short HEAD)"
+    echo "After HEAD: $after_head"
+  fi
+
+  if ! run_step "[STEP 4/4] Push" "git push" git -C "$repo_path" push; then
+    hr
+    echo "[FAILED] $repo_label"
+    echo "Failed Step: push"
+    return 1
+  fi
+
+  echo "Result: SUCCESS"
+  echo "Summary: branch=${branch:-DETACHED}, committed=${committed}, head=${after_head}"
+}
+
+run_repo "$OPENCLAW_REPO" "OPENCLAW"
+run_repo "$SUPER8_REPO" "SUPER8"
+
+hr
+echo "All done. Both repositories completed pull/add/commit/push successfully."

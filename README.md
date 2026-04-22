@@ -3,14 +3,16 @@
 
 `Longwang-Claw` 是把本地 `~/.openclaw` 里已经存在的龙王小龙虾核心自动化流程，按可公开的技术资产直接抽出来后的装配仓。
 
-当前这一版优先纳入的是第一批核心闭包：
+当前这一版优先纳入的是已经能直接装配回 `~/.openclaw/workspace` 的核心闭包：
 
 - `workspace/bin/`
 - `workspace/lib/`
 - `workspace/config/`
 - `workspace/plans/`
 - `workspace/skills/`
-- `workspace/Super8/.opencode/_scripts/`
+- `workspace/Super8/.opencode/`
+- `workspace/Super8/*.md`
+- `scripts/`
 - `docs/`
 
 本仓当前的重心不是案例产物、宣发资料、靶场源码，也不是运行态数据，而是这套自动化主线本身：
@@ -33,7 +35,10 @@ Longwang-Claw/
     config/
     plans/
     skills/
-    Super8/.opencode/_scripts/
+    Super8/
+      .opencode/
+    ...
+  scripts/
 ```
 
 ## 先读什么
@@ -45,12 +50,16 @@ Longwang-Claw/
 - `docs/33-Skill_Tool_Wrapper_Harness工程说明.md`
 - `docs/OpenClaw_实装入口设计.md`
 
-## 当前已落的第一批核心资产
+## 当前已落的核心资产
 
 - Dispatcher / launch guard / cron helper / docker inventory
+- verify-v4 auto runner / openclaw-super8 sync helper
 - AI-native development skill
 - wrapped audit / status / verify-v4 / env-bootstrap / finding-replay / distillation
 - real-poc / real-poc-preflight / delivery-reports / asset-evidence
-- Super8 wrapper 启动入口与状态入口
+- RCE focus / RCE inventory / unauth inventory
+- Feishu publisher / Feishu delivery publisher
+- Super8 wrapper、command、agents、XML source-of-truth 与启动说明
+- `scripts/bootstrap_openclaw_layout.py` 薄初始化脚本
 
 后续继续沿着同一路线补更多闭包，不另起一套新结构。
