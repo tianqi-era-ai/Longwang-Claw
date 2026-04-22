@@ -1,0 +1,34 @@
+{
+  "jobs": [
+    {
+      "name": "Loop9 Publish Dispatcher",
+      "schedule": {"kind": "cron", "expr": "15 * * * *", "tz": "Asia/Shanghai"},
+      "sessionTarget": "isolated",
+      "enabled": false,
+      "payload": {
+        "kind": "agentTurn",
+        "message": "读取 ~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-publish.md，严格按其中流程运行一次。若没有可执行候选，输出 NO_REPLY。"
+      }
+    },
+    {
+      "name": "Loop9 Audit Dispatcher",
+      "schedule": {"kind": "cron", "expr": "30 * * * *", "tz": "Asia/Shanghai"},
+      "sessionTarget": "isolated",
+      "enabled": false,
+      "payload": {
+        "kind": "agentTurn",
+        "message": "读取 ~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-audit.md，严格按其中流程运行一次。若没有可执行候选，输出 NO_REPLY。"
+      }
+    },
+    {
+      "name": "Loop9 Real-PoC Dispatcher",
+      "schedule": {"kind": "cron", "expr": "5,25,45 * * * *", "tz": "Asia/Shanghai"},
+      "sessionTarget": "isolated",
+      "enabled": false,
+      "payload": {
+        "kind": "agentTurn",
+        "message": "读取 ~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-poc.md，严格按其中流程运行一次。若没有可执行候选，输出 NO_REPLY。"
+      }
+    }
+  ]
+}

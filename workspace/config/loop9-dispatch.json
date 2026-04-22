@@ -1,0 +1,31 @@
+{
+  "audit": {
+    "maxConcurrent": 1,
+    "manualQueue": []
+  },
+  "poc": {
+    "maxConcurrent": 1,
+    "manualQueue": []
+  },
+  "deliveryReportPublish": {
+    "maxConcurrent": 1,
+    "lockStaleMinutes": 180,
+    "manualQueue": []
+  },
+  "launchGuard": {
+    "enabled": true,
+    "swapUsedMiBMax": 6144,
+    "dataAvailGiBMin": 25,
+    "rootAvailGiBMin": 25,
+    "activeOpencodeCountMax": 20,
+    "activeOpencodeRssMiBMax": 4096,
+    "virtualizationRssMiBMax": 10000
+  },
+  "dockerCleanup": {
+    "enabled": true,
+    "diskAvailGiBMin": 25,
+    "retainHours": 12,
+    "maxConcurrent": 1,
+    "protectCurrentDynamicVerify": true
+  }
+}

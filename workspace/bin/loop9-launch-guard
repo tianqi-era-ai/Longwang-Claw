@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+WORKSPACE = Path('~/.openclaw/workspace').expanduser()
+if str(WORKSPACE) not in sys.path:
+    sys.path.insert(0, str(WORKSPACE))
+
+from lib.loop9_automation.config import CONFIG_PATH, load_dispatch_config
+from lib.loop9_automation.launch_guard import build_launch_snapshot, check_launch_allowed, format_guard_block
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description='Loop9 launch guard and config helper.')
+    sub = parser.add_subparsers(dest='command', required=True)
+
+    show = sub.add_parser('show', help='Show current config and runtime snapshot')
+    show.add_argument('kind', choices=['audit', 'poc'])
+    show.add_argument('--json', action='store_true')
+
+    check = sub.add_parser('check', help='Check whether launching a new task is allowed')
+    check.add_argument('kind', choices=['audit', 'poc'])
+    check.add_argument('--json', action='store_true')
+    return parser
+
+
+def emit(data: dict, as_json: bool) -> None:
+    if as_json:
+        print(json.dumps(data, ensure_ascii=False, indent=2))
+        return
+    for key, value in data.items():
+        print(f'{key}={value}')
+
+
+def main() -> int:
+    ns = build_parser().parse_args()
+    if ns.command == 'show':
+        payload = {
+            'configPath': str(CONFIG_PATH),
+            'config': load_dispatch_config(),
+            'snapshot': build_launch_snapshot(ns.kind),
+        }
+        emit(payload, ns.json)
+        return 0
+    if ns.command == 'check':
+        result = check_launch_allowed(ns.kind)
+        if ns.json:
+            emit(result, True)
+        else:
+            if result.get('ok'):
+                print(f'[loop9-guard] Launch allowed for kind={ns.kind}')
+                print(json.dumps(result['snapshot'], ensure_ascii=False, indent=2))
+            else:
+                print(format_guard_block(result))
+        return 0 if result.get('ok') else 2
+    return 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
