@@ -1,5 +1,5 @@
 # Longwang-Claw
-龙王小龙虾（LongWangCraw）是一套开源、国产、可控的 AI 原生网络安全工作流体系，能把漏洞发现→环境搭建→PoC 验证→证据固定→报告交付全流程自动化打通，让 AI 能持续推进复杂安全任务直到闭环交付。
+龙王小龙虾（LongWangClaw）是一套开源、国产、可控的 AI 原生网络安全工作流体系，能把漏洞发现→环境搭建→PoC 验证→证据固定→报告交付全流程自动化打通，让 AI 能持续推进复杂安全任务直到闭环交付。
 
 `Longwang-Claw` 是把本地 `~/.openclaw` 里已经存在的龙王小龙虾核心自动化流程，按可公开的技术资产直接抽出来后的装配仓。
 
@@ -10,7 +10,9 @@
 - `workspace/bin/`
 - `workspace/lib/`
 - `workspace/config/`
+- `workspace/hooks/`
 - `workspace/plans/`
+- `workspace/plugins/`
 - `workspace/skills/`
 - `workspace/heartbeat/`
 - `workspace/prompts/`
@@ -43,8 +45,10 @@ Longwang-Claw/
     bin/
     lib/
     config/
+    hooks/
     heartbeat/
     plans/
+    plugins/
     prompts/
     skills/
     Super8/
@@ -66,6 +70,7 @@ Longwang-Claw/
 ## 当前已落的核心资产
 
 - Dispatcher / launch guard / cron helper / docker inventory
+- default-model bootstrap hook / Star Office state sync plugin
 - verify-v4 auto runner / openclaw-super8 sync helper
 - AI-native development skill
 - wrapped audit / status / verify-v4 / env-bootstrap / finding-replay / distillation
@@ -76,6 +81,7 @@ Longwang-Claw/
 - Super8 wrapper、command、agents、XML source-of-truth 与启动说明
 - Super8 `.opencode` plugin dependency files与 OpenCode 傻瓜流程说明
 - OpenClaw / Telegram 实装入口原始文件、heartbeat 调度入口、heartbeat 子任务 prompt
+- OpenClaw workspace hook 与本地状态同步插件源码
 - `scripts/bootstrap_openclaw_layout.py` 薄初始化脚本
 
 后续继续沿着同一路线补更多闭包，不另起一套新结构。

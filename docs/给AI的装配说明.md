@@ -29,8 +29,10 @@
     bin/
     lib/
     config/
+    hooks/
     heartbeat/
     plans/
+    plugins/
     prompts/
     skills/
     Super8/
@@ -61,6 +63,22 @@
 
 - `Node.js >= 22`
 
+## 当前可选但很重要的 workspace 控制面资产
+
+如果你要恢复的不只是 `dispatcher / skill / Super8` 主线，还要恢复一些本地控制面辅助能力，那么建议再一并放好：
+
+1. `workspace/hooks/handlers/inject-runtime-default-model.js`
+2. `workspace/plugins/star-office-sync/`
+3. `workspace/bin/star-office-state`
+
+它们分别承担：
+
+- 启动时把当前 config-backed 默认模型注入成一个可读的 bootstrap 文件
+- 把主 agent 的阶段状态同步到本地状态面
+- 在必要时手动薄覆盖状态面，而不是去改主流程
+
+其中 `workspace/plugins/star-office-sync/` 不是主闭环必需，但如果你希望恢复“状态查看 / 长任务观察 / 本地状态面同步”这一层，它是当前真实源码资产的一部分。
+
 ## 当前必须落位的目录
 
 1. `workspace/bin/`
@@ -90,7 +108,8 @@
 7. 把 `workspace/Super8/.opencode/command/`、`agents/`、`_scripts/`、`_xml/` 放好
 8. 把 `workspace/Super8/.opencode/package.json`、`bun.lock`、`OpenCode——审计0day——傻瓜流程.md`、`loop9_wrapped_audit/` 放好
 9. 把 `workspace/Super8/START_HERE_Loop9.md`、`workspace/Super8/README.loop9-local.md`、`workspace/Super8/.gitignore` 放好
-10. 再检查关键入口是否存在
+10. 如果还要恢复默认模型注入或本地状态面，再补 `workspace/hooks/`、`workspace/plugins/` 与 `workspace/bin/star-office-state`
+11. 再检查关键入口是否存在
 
 ## 当前关键入口
 
@@ -133,6 +152,13 @@
 - `workspace/Super8/START_HERE_Loop9.md`
 - `workspace/Super8/README.loop9-local.md`
 
+## 当前可选控制面入口
+
+- `workspace/bin/star-office-state`
+- `workspace/hooks/handlers/inject-runtime-default-model.js`
+- `workspace/plugins/star-office-sync/index.ts`
+- `workspace/plugins/star-office-sync/openclaw.plugin.json`
+
 ## 建议一并给 AI 读取的设计稿
 
 如果装配者不只是复制文件，而是还要理解这套主线怎么接、哪些 skill 负责什么、哪些输入输出不能乱改，建议把下面这些计划稿一并喂给 AI：
@@ -166,6 +192,7 @@
 - 后台运行/观察：`tmux`
 - 容器与靶场：`docker`、`docker compose`（按需）
 - 可选同步能力：Feishu 相关 MCP / tool 能力
+- 可选状态面：Star Office UI（如果要启用 `workspace/plugins/star-office-sync/`）
 
 当前这台机器上能确认到的是：
 
@@ -194,6 +221,7 @@ python3 scripts/bootstrap_openclaw_layout.py --workspace-root ~/.openclaw/worksp
 
 - 把 `workspace/` 下的公开资产回填到 `~/.openclaw/workspace/`
 - 把 `extensions/openclaw-lark/` 回填到 `~/.openclaw/extensions/openclaw-lark/`
+- 其中也包括 `workspace/hooks/` 和 `workspace/plugins/`
 
 如果你的目标路径不是标准的 `~/.openclaw/workspace`，而是某个临时目录或其它自定义目录，建议同时显式传：
 

@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+import json
+import os
+import sys
+import time
+from datetime import datetime
+from pathlib import Path
+
+REPO_PATH = Path(os.environ.get("STAR_OFFICE_REPO", str(Path.home() / "Documents" / "Star-Office-UI")))
+STATE_FILE = Path(os.environ.get("STAR_OFFICE_STATE_FILE", str(REPO_PATH / "state.json")))
+CACHE_FILE = Path(os.environ.get("STAR_OFFICE_CACHE_FILE", str(Path.home() / ".openclaw" / "workspace" / "memory" / "star-office-sync-cache.json")))
+MIN_UPDATE_MS = int(os.environ.get("STAR_OFFICE_MIN_UPDATE_MS", "5000"))
+VALID = {"idle", "writing", "researching", "executing", "syncing", "error", "receiving", "replying"}
+
+
+def load_json(path: Path):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def save_json(path: Path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("usage: star-office-state <state> [detail]", file=sys.stderr)
+        return 1
+
+    state = sys.argv[1].strip()
+    detail = sys.argv[2].strip() if len(sys.argv) > 2 else ""
+
+    if state not in VALID:
+        print(f"invalid state: {state}", file=sys.stderr)
+        return 2
+
+    if not STATE_FILE.exists():
+        print(f"state file missing: {STATE_FILE}", file=sys.stderr)
+        return 3
+
+    now_ms = int(time.time() * 1000)
+    cache = load_json(CACHE_FILE)
+    if (
+        cache.get("state") == state
+        and cache.get("detail") == detail
+        and isinstance(cache.get("updated_ms"), int)
+        and now_ms - cache["updated_ms"] < MIN_UPDATE_MS
+    ):
+        return 0
+
+    current = load_json(STATE_FILE)
+    if current.get("state") == state and current.get("detail") == detail:
+        save_json(CACHE_FILE, {"state": state, "detail": detail, "updated_ms": now_ms})
+        return 0
+
+    current["state"] = state
+    current["detail"] = detail
+    current["updated_at"] = datetime.now().isoformat()
+    if state == "idle":
+        current["progress"] = 0
+
+    save_json(STATE_FILE, current)
+    save_json(CACHE_FILE, {"state": state, "detail": detail, "updated_ms": now_ms})
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

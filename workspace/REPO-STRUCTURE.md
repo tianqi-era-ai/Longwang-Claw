@@ -6,6 +6,9 @@ This workspace lives **inside** a larger Git repository rooted at:
 
 So when working from `workspace/`, do **not** assume the repo only contains workspace notes. The real repository also includes runtime config, agent state, browser state, cron data, device state, and other operational files.
 
+This file describes that **live local** mental model.
+The public `Longwang-Claw` repo only carries a selected open-source-safe subset of those assets, not the whole live tree.
+
 ## Mental model
 
 Think of the repo as having two layers:
@@ -13,7 +16,7 @@ Think of the repo as having two layers:
 ### 1. Human-edited / durable knowledge
 These are usually the files you most want to read, edit, and intentionally commit.
 
-- `workspace/` — persona, user notes, long-term memory, docs, helper files
+- `workspace/` — docs, helper files, selected hooks/plugins, and other durable workflow assets
 - `openclaw.json` — main OpenClaw config
 - selected files under `agents/`, `cron/`, `devices/`, `identity/` when they represent meaningful durable state
 
@@ -43,9 +46,13 @@ When talking about Git status, backup completeness, or whether something "was up
 A commit made from `workspace/` may still need files outside `workspace/` (like `openclaw.json`) if the change affected real system behavior.
 
 ## Current known important files
-- `openclaw.json` — live config; backup this when model/config tuning changes
-- `workspace/AGENTS.md` — operational rules
-- `workspace/MEMORY.md` — curated long-term memory
+- In the **live local repo**, `openclaw.json` is the main config source of truth, but it is intentionally not part of this public repo.
+- In the **public Longwang-Claw repo**, start with:
+  - `docs/给AI的装配说明.md`
+  - `workspace/REPO-STRUCTURE.md`
+  - `workspace/hooks/handlers/inject-runtime-default-model.js`
+  - `workspace/plugins/star-office-sync/`
+  - `extensions/openclaw-lark/`
 
 ## User habit to remember
 The human may run `git add .` directly from `~/.openclaw`. That means `.gitignore` coverage matters a lot, and audit conclusions should be tested against that workflow rather than a workspace-only workflow.
