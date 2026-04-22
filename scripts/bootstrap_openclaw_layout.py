@@ -16,10 +16,16 @@ COPY_DIRS = (
     ("workspace/config", "config"),
     ("workspace/plans", "plans"),
     ("workspace/skills", "skills"),
+    ("workspace/heartbeat", "heartbeat"),
+    ("workspace/prompts", "prompts"),
     ("workspace/Super8/.opencode", "Super8/.opencode"),
 )
 
 COPY_FILES = (
+    ("workspace/HEARTBEAT.md", "HEARTBEAT.md"),
+    ("workspace/OpenClaw_实装入口设计.md", "OpenClaw_实装入口设计.md"),
+    ("workspace/TELEGRAM_小龙虾封装说明.md", "TELEGRAM_小龙虾封装说明.md"),
+    ("workspace/REPO-STRUCTURE.md", "REPO-STRUCTURE.md"),
     ("workspace/Super8/START_HERE_Loop9.md", "Super8/START_HERE_Loop9.md"),
     ("workspace/Super8/README.loop9-local.md", "Super8/README.loop9-local.md"),
     ("workspace/Super8/.gitignore", "Super8/.gitignore"),

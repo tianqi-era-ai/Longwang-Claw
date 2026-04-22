@@ -20,10 +20,16 @@
 ```text
 ~/.openclaw/
   workspace/
+    HEARTBEAT.md
+    OpenClaw_实装入口设计.md
+    TELEGRAM_小龙虾封装说明.md
+    REPO-STRUCTURE.md
     bin/
     lib/
     config/
+    heartbeat/
     plans/
+    prompts/
     skills/
     Super8/
       .gitignore
@@ -49,22 +55,29 @@
 3. `workspace/config/`
 4. `workspace/plans/`
 5. `workspace/skills/`
-6. `workspace/Super8/.opencode/`
-7. `workspace/Super8/START_HERE_Loop9.md`
-8. `workspace/Super8/README.loop9-local.md`
-9. `workspace/Super8/.gitignore`
+6. `workspace/heartbeat/`
+7. `workspace/prompts/`
+8. `workspace/HEARTBEAT.md`
+9. `workspace/OpenClaw_实装入口设计.md`
+10. `workspace/TELEGRAM_小龙虾封装说明.md`
+11. `workspace/REPO-STRUCTURE.md`
+12. `workspace/Super8/.opencode/`
+13. `workspace/Super8/START_HERE_Loop9.md`
+14. `workspace/Super8/README.loop9-local.md`
+15. `workspace/Super8/.gitignore`
 
 ## 装配顺序
 
 1. 先确认目标根目录：`~/.openclaw/workspace/`
-2. 把 `workspace/lib/` 放好
-3. 把 `workspace/bin/` 放好
-4. 把 `workspace/config/` 与 `workspace/plans/` 放好
-5. 把 `workspace/skills/` 放好，确保 skill 内部的 `references/`、`scripts/`、`template/` 一起带上
-6. 把 `workspace/Super8/.opencode/command/`、`agents/`、`_scripts/`、`_xml/` 放好
-7. 把 `workspace/Super8/.opencode/package.json`、`bun.lock`、`OpenCode——审计0day——傻瓜流程.md`、`loop9_wrapped_audit/` 放好
-8. 把 `workspace/Super8/START_HERE_Loop9.md`、`workspace/Super8/README.loop9-local.md`、`workspace/Super8/.gitignore` 放好
-9. 再检查关键入口是否存在
+2. 先把 `workspace/HEARTBEAT.md`、`workspace/OpenClaw_实装入口设计.md`、`workspace/TELEGRAM_小龙虾封装说明.md`、`workspace/REPO-STRUCTURE.md` 放回根层
+3. 把 `workspace/lib/` 放好
+4. 把 `workspace/bin/` 放好
+5. 把 `workspace/config/`、`workspace/plans/`、`workspace/heartbeat/`、`workspace/prompts/` 放好
+6. 把 `workspace/skills/` 放好，确保 skill 内部的 `references/`、`scripts/`、`template/` 一起带上
+7. 把 `workspace/Super8/.opencode/command/`、`agents/`、`_scripts/`、`_xml/` 放好
+8. 把 `workspace/Super8/.opencode/package.json`、`bun.lock`、`OpenCode——审计0day——傻瓜流程.md`、`loop9_wrapped_audit/` 放好
+9. 把 `workspace/Super8/START_HERE_Loop9.md`、`workspace/Super8/README.loop9-local.md`、`workspace/Super8/.gitignore` 放好
+10. 再检查关键入口是否存在
 
 ## 当前关键入口
 
@@ -74,6 +87,12 @@
 - `workspace/bin/loop9-verify-v4-auto-run.sh`
 - `workspace/bin/git-sync-openclaw-super8`
 - `workspace/bin/openclaw-docker-inventory.py`
+- `workspace/HEARTBEAT.md`
+- `workspace/heartbeat/loop9-status-dispatch.md`
+- `workspace/prompts/heartbeat-loop9-status-subagent.md`
+- `workspace/OpenClaw_实装入口设计.md`
+- `workspace/TELEGRAM_小龙虾封装说明.md`
+- `workspace/REPO-STRUCTURE.md`
 - `workspace/skills/loop9-rce-audit-focus/SKILL.md`
 - `workspace/skills/loop9-rce-inventory/SKILL.md`
 - `workspace/skills/loop9-unauth-inventory/SKILL.md`
@@ -177,10 +196,14 @@ python3 scripts/bootstrap_openclaw_layout.py --workspace-root ~/.openclaw/worksp
 
 1. `docs/20-核心工作流全景总览.md`
 2. `docs/31-Dispatcher主线说明.md`
-3. `docs/33-Skill_Tool_Wrapper_Harness工程说明.md`
-4. `docs/OpenClaw_实装入口设计.md`
-5. `workspace/plans/2026-03-29-loop9-artifact-consumer-judgement-v0.md`
-6. `workspace/plans/2026-03-28-loop9-远程-docker-靶场宿主机方案草案.md`
-7. `workspace/Super8/START_HERE_Loop9.md`
-8. `workspace/skills/ai-native-development/SKILL.md`
-9. `workspace/skills/loop9-verify-v4/SKILL.md`
+3. `docs/32-定时任务与长任务调度说明.md`
+4. `docs/33-Skill_Tool_Wrapper_Harness工程说明.md`
+5. `workspace/HEARTBEAT.md`
+6. `workspace/heartbeat/loop9-status-dispatch.md`
+7. `workspace/OpenClaw_实装入口设计.md`
+8. `workspace/TELEGRAM_小龙虾封装说明.md`
+9. `workspace/plans/2026-03-29-loop9-artifact-consumer-judgement-v0.md`
+10. `workspace/plans/2026-03-28-loop9-远程-docker-靶场宿主机方案草案.md`
+11. `workspace/Super8/START_HERE_Loop9.md`
+12. `workspace/skills/ai-native-development/SKILL.md`
+13. `workspace/skills/loop9-verify-v4/SKILL.md`

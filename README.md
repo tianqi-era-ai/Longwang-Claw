@@ -5,11 +5,17 @@
 
 当前这一版优先纳入的是已经能直接装配回 `~/.openclaw/workspace` 的核心闭包：
 
+- `workspace/HEARTBEAT.md`
 - `workspace/bin/`
 - `workspace/lib/`
 - `workspace/config/`
 - `workspace/plans/`
 - `workspace/skills/`
+- `workspace/heartbeat/`
+- `workspace/prompts/`
+- `workspace/OpenClaw_实装入口设计.md`
+- `workspace/TELEGRAM_小龙虾封装说明.md`
+- `workspace/REPO-STRUCTURE.md`
 - `workspace/Super8/.opencode/`
 - `workspace/Super8/*.md`
 - `scripts/`
@@ -30,10 +36,13 @@
 Longwang-Claw/
   docs/
   workspace/
+    HEARTBEAT.md
     bin/
     lib/
     config/
+    heartbeat/
     plans/
+    prompts/
     skills/
     Super8/
       .opencode/
@@ -47,6 +56,7 @@ Longwang-Claw/
 - `docs/给AI的装配说明.md`
 - `docs/20-核心工作流全景总览.md`
 - `docs/31-Dispatcher主线说明.md`
+- `docs/32-定时任务与长任务调度说明.md`
 - `docs/33-Skill_Tool_Wrapper_Harness工程说明.md`
 - `docs/OpenClaw_实装入口设计.md`
 
@@ -61,6 +71,7 @@ Longwang-Claw/
 - Feishu publisher / Feishu delivery publisher
 - Super8 wrapper、command、agents、XML source-of-truth 与启动说明
 - Super8 `.opencode` plugin dependency files与 OpenCode 傻瓜流程说明
+- OpenClaw / Telegram 实装入口原始文件、heartbeat 调度入口、heartbeat 子任务 prompt
 - `scripts/bootstrap_openclaw_layout.py` 薄初始化脚本
 
 后续继续沿着同一路线补更多闭包，不另起一套新结构。
