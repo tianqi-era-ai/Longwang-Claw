@@ -70,6 +70,8 @@ Longwang-Claw/
 - `workspace/plans/2026-03-26-loop9-concurrency-config-and-launch-guard.md`
 - `workspace/plans/2026-03-16-heartbeat-loop9-status-subagent-design.md`
 - `workspace/plans/2026-03-17-loop9-real-poc-preflight-skill.md`
+- `workspace/plans/2026-03-28-loop9-远程-docker-靶场宿主机方案草案.md`
+- `workspace/plans/2026-03-29-loop9-artifact-consumer-judgement-v0.md`
 - `workspace/plans/2026-03-27-loop9-asset-evidence-skill-io-contract-v1.md`
 - `workspace/plans/2026-04-09-ai-native-development-skill-plan.md`
 - `workspace/plans/loop9-rce-skill-methodology-plan-2026-03-18.md`

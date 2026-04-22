@@ -108,6 +108,8 @@
 - `workspace/plans/2026-03-26-loop9-concurrency-config-and-launch-guard.md`
 - `workspace/plans/2026-03-16-heartbeat-loop9-status-subagent-design.md`
 - `workspace/plans/2026-03-17-loop9-real-poc-preflight-skill.md`
+- `workspace/plans/2026-03-28-loop9-远程-docker-靶场宿主机方案草案.md`
+- `workspace/plans/2026-03-29-loop9-artifact-consumer-judgement-v0.md`
 - `workspace/plans/2026-03-27-loop9-asset-evidence-skill-io-contract-v1.md`
 - `workspace/plans/2026-04-09-ai-native-development-skill-plan.md`
 - `workspace/plans/loop9-rce-skill-methodology-plan-2026-03-18.md`
@@ -141,6 +143,13 @@
 
 所以对其它操作者或 AI 来说，不要硬编码 `~/codex`、`~/opencode` 这种路径；优先按“命令是否在 PATH 中可用”来判断。
 
+如果当前环境不是本机 Docker，而是把 runtime 放到远端 Linux / 腾讯云 CVM 宿主机上跑，优先按下面这条路线理解：
+
+- 控制面仍在本地 `~/.openclaw/workspace`
+- 远端机器只承担 Docker / compose / 对外复测 runtime
+- 默认走 `SSH + rsync + docker compose` 这类薄远程执行，不额外发明厚控制面
+- 先读 `workspace/plans/2026-03-28-loop9-远程-docker-靶场宿主机方案草案.md`
+
 ## 薄初始化脚本
 
 如果你不是手动装配，而是想快速把本仓内容回填到 `~/.openclaw/workspace/`，可以直接跑：
@@ -170,6 +179,8 @@ python3 scripts/bootstrap_openclaw_layout.py --workspace-root ~/.openclaw/worksp
 2. `docs/31-Dispatcher主线说明.md`
 3. `docs/33-Skill_Tool_Wrapper_Harness工程说明.md`
 4. `docs/OpenClaw_实装入口设计.md`
-5. `workspace/Super8/START_HERE_Loop9.md`
-6. `workspace/skills/ai-native-development/SKILL.md`
-7. `workspace/skills/loop9-verify-v4/SKILL.md`
+5. `workspace/plans/2026-03-29-loop9-artifact-consumer-judgement-v0.md`
+6. `workspace/plans/2026-03-28-loop9-远程-docker-靶场宿主机方案草案.md`
+7. `workspace/Super8/START_HERE_Loop9.md`
+8. `workspace/skills/ai-native-development/SKILL.md`
+9. `workspace/skills/loop9-verify-v4/SKILL.md`
