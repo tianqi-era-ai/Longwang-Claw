@@ -22,6 +22,7 @@ COPY_DIRS = (
 COPY_FILES = (
     ("workspace/Super8/START_HERE_Loop9.md", "Super8/START_HERE_Loop9.md"),
     ("workspace/Super8/README.loop9-local.md", "Super8/README.loop9-local.md"),
+    ("workspace/Super8/.gitignore", "Super8/.gitignore"),
     ("workspace/Super8/LOOP9_问题地图.md", "Super8/LOOP9_问题地图.md"),
     ("workspace/Super8/LOOP9_封装计划.md", "Super8/LOOP9_封装计划.md"),
     ("workspace/Super8/下一步计划.md", "Super8/下一步计划.md"),

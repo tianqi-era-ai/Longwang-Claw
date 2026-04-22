@@ -64,3 +64,14 @@ Longwang-Claw/
 - `scripts/bootstrap_openclaw_layout.py` 薄初始化脚本
 
 后续继续沿着同一路线补更多闭包，不另起一套新结构。
+
+## 当前同步的关键设计稿
+
+- `workspace/plans/2026-03-26-loop9-concurrency-config-and-launch-guard.md`
+- `workspace/plans/2026-03-16-heartbeat-loop9-status-subagent-design.md`
+- `workspace/plans/2026-03-17-loop9-real-poc-preflight-skill.md`
+- `workspace/plans/2026-03-27-loop9-asset-evidence-skill-io-contract-v1.md`
+- `workspace/plans/2026-04-09-ai-native-development-skill-plan.md`
+- `workspace/plans/loop9-rce-skill-methodology-plan-2026-03-18.md`
+
+这些文档不是宣发材料，也不是运行态输出，而是对现有 `bin / skills / Super8 wrapper` 的接线边界、输入输出约束和方法论补充说明，适合给 AI 或维护者直接阅读。

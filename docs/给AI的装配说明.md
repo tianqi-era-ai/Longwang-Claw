@@ -26,6 +26,7 @@
     plans/
     skills/
     Super8/
+      .gitignore
       START_HERE_Loop9.md
       README.loop9-local.md
       .opencode/
@@ -51,6 +52,7 @@
 6. `workspace/Super8/.opencode/`
 7. `workspace/Super8/START_HERE_Loop9.md`
 8. `workspace/Super8/README.loop9-local.md`
+9. `workspace/Super8/.gitignore`
 
 ## 装配顺序
 
@@ -61,7 +63,7 @@
 5. 把 `workspace/skills/` 放好，确保 skill 内部的 `references/`、`scripts/`、`template/` 一起带上
 6. 把 `workspace/Super8/.opencode/command/`、`agents/`、`_scripts/`、`_xml/` 放好
 7. 把 `workspace/Super8/.opencode/package.json`、`bun.lock`、`OpenCode——审计0day——傻瓜流程.md`、`loop9_wrapped_audit/` 放好
-8. 把 `workspace/Super8/START_HERE_Loop9.md` 与 `workspace/Super8/README.loop9-local.md` 放好
+8. 把 `workspace/Super8/START_HERE_Loop9.md`、`workspace/Super8/README.loop9-local.md`、`workspace/Super8/.gitignore` 放好
 9. 再检查关键入口是否存在
 
 ## 当前关键入口
@@ -98,6 +100,19 @@
 - `workspace/Super8/.opencode/OpenCode——审计0day——傻瓜流程.md`
 - `workspace/Super8/START_HERE_Loop9.md`
 - `workspace/Super8/README.loop9-local.md`
+
+## 建议一并给 AI 读取的设计稿
+
+如果装配者不只是复制文件，而是还要理解这套主线怎么接、哪些 skill 负责什么、哪些输入输出不能乱改，建议把下面这些计划稿一并喂给 AI：
+
+- `workspace/plans/2026-03-26-loop9-concurrency-config-and-launch-guard.md`
+- `workspace/plans/2026-03-16-heartbeat-loop9-status-subagent-design.md`
+- `workspace/plans/2026-03-17-loop9-real-poc-preflight-skill.md`
+- `workspace/plans/2026-03-27-loop9-asset-evidence-skill-io-contract-v1.md`
+- `workspace/plans/2026-04-09-ai-native-development-skill-plan.md`
+- `workspace/plans/loop9-rce-skill-methodology-plan-2026-03-18.md`
+
+这些文件是解释层，不是运行态目录；它们的作用是帮助 AI 参照着还原接线方式、理解方法论和边界，不是替代 `bin/`、`skills/`、`lib/` 本体。
 
 ## 关键约束
 
