@@ -8,13 +8,13 @@
 
 ```bash
 cd ~/.openclaw/workspace/Super8
-./.opencode/_scripts/loop9_authorized_review.sh <local-target-path>
+./.opencode/_scripts/loop9_authorized_review.py <local-target-path>
 ```
 
 例子：
 
 ```bash
-./.opencode/_scripts/loop9_authorized_review.sh /absolute/path/to/local/repo
+./.opencode/_scripts/loop9_authorized_review.py /absolute/path/to/local/repo
 ```
 
 说明：

@@ -15,7 +15,7 @@
 在 `Super8` 目录下执行：
 
 ```bash
-./.opencode/_scripts/loop9_authorized_review.sh '<本地项目路径>'
+./.opencode/_scripts/loop9_authorized_review.py '<本地项目路径>'
 ```
 
 默认行为：
@@ -33,7 +33,7 @@ opencode <Super8> --agent loop9-controller --prompt "请参照 '<prompt-file>'"
 如需显式测试 Open Code command 模式：
 
 ```bash
-./.opencode/_scripts/loop9_authorized_review.sh --mode command '<本地项目路径>'
+./.opencode/_scripts/loop9_authorized_review.py --mode command '<本地项目路径>'
 ```
 
 当前说明：

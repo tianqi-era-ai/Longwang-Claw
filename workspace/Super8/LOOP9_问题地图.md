@@ -8,7 +8,7 @@
 
 当前真正要达成的是：
 
-1. 让 `Super8/.opencode/_scripts/loop9_authorized_review.sh` 成为**稳定主入口**
+1. 让 `Super8/.opencode/_scripts/loop9_authorized_review.py` 成为**稳定主入口**
 2. 默认入口能够在本机：
    - 生成 prompt 文件
    - 启动 Loop9 流程
@@ -43,7 +43,7 @@
 
 主脚本：
 
-- `.opencode/_scripts/loop9_authorized_review.sh`
+- `.opencode/_scripts/loop9_authorized_review.py`
 
 当前职责：
 
@@ -100,7 +100,7 @@ opencode run --command loop9 ...
 
 ### 3.1 `command` 分支行为
 
-`./.opencode/_scripts/loop9_authorized_review.sh --mode command '<target>'`
+`./.opencode/_scripts/loop9_authorized_review.py --mode command '<target>'`
 
 现象：
 
@@ -116,7 +116,7 @@ opencode run --command loop9 ...
 
 ### 3.2 `agent` 分支行为
 
-`./.opencode/_scripts/loop9_authorized_review.sh '<target>'`
+`./.opencode/_scripts/loop9_authorized_review.py '<target>'`
 
 现象：
 
@@ -202,7 +202,7 @@ CLI command 模式应使用：
 
 ```bash
 cd ~/.openclaw/workspace/Super8
-./.opencode/_scripts/loop9_authorized_review.sh '<本地项目路径>'
+./.opencode/_scripts/loop9_authorized_review.py '<本地项目路径>'
 ```
 
 当前默认：
@@ -218,7 +218,7 @@ cd ~/.openclaw/workspace/Super8
 ### command 分支当前定位
 
 ```bash
-./.opencode/_scripts/loop9_authorized_review.sh --mode command '<本地项目路径>'
+./.opencode/_scripts/loop9_authorized_review.py --mode command '<本地项目路径>'
 ```
 
 当前定位：

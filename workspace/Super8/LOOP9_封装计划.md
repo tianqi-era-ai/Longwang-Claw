@@ -42,7 +42,7 @@
 
 统一调用：
 
-- `Super8/.opencode/_scripts/loop9_authorized_review.sh`
+- `Super8/.opencode/_scripts/loop9_authorized_review.py`
 
 原因：
 

@@ -29,8 +29,12 @@
       START_HERE_Loop9.md
       README.loop9-local.md
       .opencode/
+        package.json
+        bun.lock
+        OpenCode——审计0day——傻瓜流程.md
         command/
         agents/
+        loop9_wrapped_audit/
         _scripts/
         _xml/
 ```
@@ -56,8 +60,9 @@
 4. 把 `workspace/config/` 与 `workspace/plans/` 放好
 5. 把 `workspace/skills/` 放好，确保 skill 内部的 `references/`、`scripts/`、`template/` 一起带上
 6. 把 `workspace/Super8/.opencode/command/`、`agents/`、`_scripts/`、`_xml/` 放好
-7. 把 `workspace/Super8/START_HERE_Loop9.md` 与 `workspace/Super8/README.loop9-local.md` 放好
-8. 再检查关键入口是否存在
+7. 把 `workspace/Super8/.opencode/package.json`、`bun.lock`、`OpenCode——审计0day——傻瓜流程.md`、`loop9_wrapped_audit/` 放好
+8. 把 `workspace/Super8/START_HERE_Loop9.md` 与 `workspace/Super8/README.loop9-local.md` 放好
+9. 再检查关键入口是否存在
 
 ## 当前关键入口
 
@@ -83,10 +88,14 @@
 - `workspace/Super8/.opencode/agents/loop9-solver.md`
 - `workspace/Super8/.opencode/agents/loop9-validator.md`
 - `workspace/Super8/.opencode/agents/loop9-refiner.md`
+- `workspace/Super8/.opencode/loop9_wrapped_audit/SKILL.md`
 - `workspace/Super8/.opencode/_scripts/loop9_authorized_review.py`
 - `workspace/Super8/.opencode/_scripts/loop9_status.sh`
 - `workspace/Super8/.opencode/_scripts/split_loop9_xml.py`
 - `workspace/Super8/.opencode/_xml/loop9.master.xml`
+- `workspace/Super8/.opencode/package.json`
+- `workspace/Super8/.opencode/bun.lock`
+- `workspace/Super8/.opencode/OpenCode——审计0day——傻瓜流程.md`
 - `workspace/Super8/START_HERE_Loop9.md`
 - `workspace/Super8/README.loop9-local.md`
 

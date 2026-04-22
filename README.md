@@ -60,6 +60,7 @@ Longwang-Claw/
 - RCE focus / RCE inventory / unauth inventory
 - Feishu publisher / Feishu delivery publisher
 - Super8 wrapper、command、agents、XML source-of-truth 与启动说明
+- Super8 `.opencode` plugin dependency files与 OpenCode 傻瓜流程说明
 - `scripts/bootstrap_openclaw_layout.py` 薄初始化脚本
 
 后续继续沿着同一路线补更多闭包，不另起一套新结构。
