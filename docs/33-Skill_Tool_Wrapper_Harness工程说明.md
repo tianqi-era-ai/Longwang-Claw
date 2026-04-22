@@ -36,6 +36,11 @@ Tool 更像是系统能直接调用的原子动作。
 - 调浏览器
 - 调日历 / 飞书 / 文档 / 表格等外部能力
 
+当前公开仓里，像飞书这类外部能力并不只是一份 workflow skill，
+它在 OpenClaw 根层还有真实的 channel/plugin 源码承接，例如：
+
+- `extensions/openclaw-lark/`
+
 Tool 的特点是：
 - 边界清楚
 - 输入输出相对明确

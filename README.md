@@ -5,6 +5,7 @@
 
 当前这一版优先纳入的是已经能直接装配回 `~/.openclaw/workspace` 的核心闭包：
 
+- `extensions/openclaw-lark/`
 - `workspace/HEARTBEAT.md`
 - `workspace/bin/`
 - `workspace/lib/`
@@ -35,6 +36,8 @@
 ```text
 Longwang-Claw/
   docs/
+  extensions/
+    openclaw-lark/
   workspace/
     HEARTBEAT.md
     bin/
@@ -69,6 +72,7 @@ Longwang-Claw/
 - real-poc / real-poc-preflight / delivery-reports / asset-evidence
 - RCE focus / RCE inventory / unauth inventory
 - Feishu publisher / Feishu delivery publisher
+- OpenClaw Feishu channel plugin source (`extensions/openclaw-lark`)
 - Super8 wrapper、command、agents、XML source-of-truth 与启动说明
 - Super8 `.opencode` plugin dependency files与 OpenCode 傻瓜流程说明
 - OpenClaw / Telegram 实装入口原始文件、heartbeat 调度入口、heartbeat 子任务 prompt

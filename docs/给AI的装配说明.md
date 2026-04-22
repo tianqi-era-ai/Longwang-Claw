@@ -19,6 +19,8 @@
 
 ```text
 ~/.openclaw/
+  extensions/
+    openclaw-lark/
   workspace/
     HEARTBEAT.md
     OpenClaw_实装入口设计.md
@@ -47,6 +49,17 @@
 ```
 
 如果当前机器上还没有这套目录，优先按这个结构创建，再把本仓对应文件放进去。
+
+## 当前可选但很重要的根层资产
+
+如果你要恢复的是带飞书通道能力的 OpenClaw，而不是只恢复 `workspace` 内的工作流文件，那么还应一并放好：
+
+1. `extensions/openclaw-lark/`
+
+这层不是 workflow skill，而是 OpenClaw 的 Feishu channel plugin 源码。
+若需要这层，当前默认应准备：
+
+- `Node.js >= 22`
 
 ## 当前必须落位的目录
 
@@ -177,7 +190,20 @@
 python3 scripts/bootstrap_openclaw_layout.py --workspace-root ~/.openclaw/workspace
 ```
 
-这个脚本只做**直接复制仓库里已有文件**，不引入 manifest，不碰 runtime state，也不会替你安装 `opencode` / `codex` / `docker`。
+这个脚本会：
+
+- 把 `workspace/` 下的公开资产回填到 `~/.openclaw/workspace/`
+- 把 `extensions/openclaw-lark/` 回填到 `~/.openclaw/extensions/openclaw-lark/`
+
+如果你的目标路径不是标准的 `~/.openclaw/workspace`，而是某个临时目录或其它自定义目录，建议同时显式传：
+
+```bash
+python3 scripts/bootstrap_openclaw_layout.py \
+  --openclaw-root /absolute/path/to/.openclaw \
+  --workspace-root /absolute/path/to/.openclaw/workspace
+```
+
+它只做**直接复制仓库里已有文件**，不引入 manifest，不碰 runtime state，也不会替你安装 `opencode` / `codex` / `docker`。
 
 ## 当前不在本仓第一批范围内的内容
 
@@ -188,9 +214,19 @@ python3 scripts/bootstrap_openclaw_layout.py --workspace-root ~/.openclaw/worksp
 - auth / pairing / device / session / logs
 - 本地 cron 运行记录
 - 本地 memory / tmp / runs / automation-state
+- 当前机器上的 `~/.openclaw/openclaw.json`
 - 实际 targets 源码目录
 - 实际 reports 交付产物目录
 - `~/.codex/sessions/`、`~/.config/opencode/` 这类本机运行态/账号态目录
+
+其中 `~/.openclaw/openclaw.json` 需要单独说明：
+
+- 它确实是控制面核心配置
+- 但当前本机文件包含真实 provider key、agent binding、channel target、allowFrom 等 live 配置
+- 所以这版公开仓不直接带这份活配置，而是保留：
+  - `workspace/` 下的控制面/工作流静态骨架
+  - `extensions/openclaw-lark/` 这类可公开的根层源码
+  - 各类装配与接线说明
 
 ## 推荐阅读顺序
 

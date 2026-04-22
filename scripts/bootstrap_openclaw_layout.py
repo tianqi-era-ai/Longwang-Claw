@@ -10,6 +10,10 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
+ROOT_COPY_DIRS = (
+    ("extensions/openclaw-lark", "extensions/openclaw-lark"),
+)
+
 COPY_DIRS = (
     ("workspace/bin", "bin"),
     ("workspace/lib", "lib"),
@@ -65,6 +69,11 @@ def main() -> int:
         help="Path to the Longwang-Claw repo root",
     )
     parser.add_argument(
+        "--openclaw-root",
+        default=None,
+        help="Target ~/.openclaw root; defaults to parent of --workspace-root",
+    )
+    parser.add_argument(
         "--workspace-root",
         default=str(Path.home() / ".openclaw" / "workspace"),
         help="Target OpenClaw workspace root",
@@ -78,11 +87,24 @@ def main() -> int:
 
     repo_root = Path(args.repo_root).expanduser().resolve()
     workspace_root = Path(args.workspace_root).expanduser()
+    openclaw_root = (
+        Path(args.openclaw_root).expanduser()
+        if args.openclaw_root
+        else workspace_root.parent
+    )
 
     copied = 0
     print(f"repo_root={repo_root}")
+    print(f"openclaw_root={openclaw_root}")
     print(f"workspace_root={workspace_root}")
     print(f"mode={'dry-run' if args.dry_run else 'copy'}")
+
+    for src_rel, dst_rel in ROOT_COPY_DIRS:
+        src = repo_root / src_rel
+        dst = openclaw_root / dst_rel
+        count = copy_dir(src, dst, args.dry_run)
+        copied += count
+        print(f"[root-dir] {src_rel} -> {dst_rel} ({count} files)")
 
     for src_rel, dst_rel in COPY_DIRS:
         src = repo_root / src_rel
