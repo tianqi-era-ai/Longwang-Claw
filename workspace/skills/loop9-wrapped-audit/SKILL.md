@@ -2,7 +2,7 @@
 name: loop9-wrapped-audit
 description: Launch the Super8 Loop9 wrapper for a local target path from chat. In the user's real usage, this skill may be used in two ways: (1) launch the standardized audit directly for an already-materialized local target path, or (2) under `weibu-submission`, first read the provided scope/reference materials, proactively discover a suitable target with a mainland-China usage bias (Gitee first, GitCode second, GitHub only as a narrow exception lane), materialize it locally under `targets/`, and then launch the standardized audit. Use when the user wants the full standardized Loop9 audit entry workflow rather than ad-hoc manual commands.
 user-invocable: true
-metadata: {"openclaw":{"emoji":"🦞","os":["darwin"],"requires":{"bins":["python3","bash"]}}}
+metadata: {"openclaw":{"emoji":"🦞","os":["darwin","linux"],"requires":{"bins":["python3","bash"]}}}
 ---
 
 Start the Super8 Loop9 workflow only through the wrapper script below.

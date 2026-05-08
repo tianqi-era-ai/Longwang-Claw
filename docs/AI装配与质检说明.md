@@ -69,6 +69,8 @@ cp workspace/config/longwang.example.json workspace/config/longwang.local.json
 python3 scripts/render_longwang_config.py --profile workspace/config/longwang.local.json --dry-run
 ```
 
+这一步会同时检查 OpenClaw、OpenCode、Codex、cron、env 模板，以及 OpenCode agents 的 `model` / `variant` 是否能从统一 profile 渲染。
+
 5. 全局 doctor：
 
 ```bash
@@ -90,6 +92,8 @@ python3 scripts/longwang_doctor.py --profile workspace/config/longwang.local.jso
 ```bash
 python3 scripts/render_longwang_config.py --profile workspace/config/longwang.local.json --write
 ```
+
+写入后，`~/.openclaw/workspace/Super8/.opencode/agents/*.md` 的 frontmatter 应与 `models.opencode.agentModel` 和 `models.opencode.variant` 一致。
 
 ## 六段闭环怎么判断
 
@@ -189,3 +193,15 @@ templates/cron/jobs.json.tpl -> ~/.openclaw/cron/jobs.json
 - 不要复制 `reports/`、`runs/`、`targets/`、`memory/`、`logs/`。
 - 不要把 Feishu / Telegram / OpenAI / FOFA / Hunter / Shodan 的真实 key 写入仓库。
 - 不要新增 CI、smoke、demo、target-sync 作为本轮装配条件。
+- 不要把宣发/运营材料或首发案例名单补进仓库；这些只作为宣发侧人工选材。
+
+## Harness
+
+Harness 已单独放在仓库根目录 `harness/`。它是高级控制面说明层，不是新的 runtime 入口。
+
+AI 可以阅读：
+
+- `harness/README.md`
+- `harness/loop9-verify-v4-control-contract.md`
+
+但修补运行链路时仍以 `workspace/skills/loop9-verify-v4/` 下的 active refs 为准。不要把 Harness 扩展成厚 orchestrator、CI、smoke 或 demo。

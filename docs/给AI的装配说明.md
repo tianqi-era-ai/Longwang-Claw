@@ -39,5 +39,9 @@ python3 scripts/render_longwang_config.py --profile workspace/config/longwang.lo
 - `logs/`
 - `.env*`
 - 私钥、真实 token、真实 API key
+- 宣发/运营材料
+- 首发案例名单
 
 私有配置统一从 `workspace/config/longwang.local.json` 渲染，或从本机环境变量注入。
+
+Harness 已单独放在 `harness/`，只作为高级控制面说明，不作为新的执行入口或 demo。

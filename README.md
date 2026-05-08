@@ -9,7 +9,9 @@ LongWangClaw（龙王小龙虾）是一套可装配到 OpenClaw 工作区里的 
 1. `docs/端到端运行手册.md`：真实六段流程入口。
 2. `docs/配置与私有化指南.md`：哪些配置必须本机填写，哪些不能入仓。
 3. `docs/AI装配与质检说明.md`：给 OpenClaw / OpenCode / Codex 读的装配与修补步骤。
-4. `docs/20-核心工作流全景总览.md`：产品工作流全景。
+4. `docs/原始开源计划对照复核.md`：对照最初开源计划逐项看当前覆盖与剩余对齐点。
+5. `docs/20-核心工作流全景总览.md`：产品工作流全景。
+6. `harness/README.md`：Harness 高级工程层，不包含宣发案例或运行产物。
 
 ## 快速装配
 
@@ -36,8 +38,9 @@ python3 scripts/render_longwang_config.py --profile workspace/config/longwang.lo
 - `workspace/Super8/工作流_提示词工程/`：wrapper 发车所需的两个公开 prompt 模板，不包含历史案例输出。
 - `extensions/openclaw-lark/`：OpenClaw 飞书通道插件源码。
 - `templates/`：OpenClaw / OpenCode / Codex / cron / env 的本机私有配置模板。
-- `scripts/render_longwang_config.py`：从统一 profile 渲染本机配置。
+- `scripts/render_longwang_config.py`：从统一 profile 渲染本机配置，并把 OpenCode agent 的 `model` / `variant` 写成用户 profile 的值。
 - `scripts/longwang_doctor.py`：全链路 readiness 质检。
+- `harness/`：Loop9 Verify V4 Harness 控制面纪律说明。
 
 ## 六段执行链
 
@@ -63,6 +66,8 @@ python3 scripts/render_longwang_config.py --profile workspace/config/longwang.lo
 - `~/.codex/sessions/`
 - `.env*`
 - 私钥、token、真实 API key
+- 宣发/运营材料
+- 首发案例名单
 
 FOFA / Hunter / Shodan、Feishu、OpenAI/OpenCode/Codex、远程 Docker/CVM 等私有值都从 `workspace/config/longwang.local.json` 或本机环境变量注入，不在公开仓内置默认明文值。
 

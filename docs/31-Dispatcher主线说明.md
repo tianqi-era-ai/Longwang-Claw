@@ -1,219 +1,114 @@
-# 龙王小龙虾｜Dispatcher 主线说明（第一版）
+# 龙王小龙虾｜Dispatcher 主线说明
 
-## 一、先给结论
+## 先给结论
 
-在龙王小龙虾当前的工作流体系里，**Dispatcher 不是一个可有可无的辅助脚本**，而是：
+在 LongWangClaw 里，Dispatcher 是 Loop9 主线的阶段判断与推进层。它不是普通 wrapper，也不是某个子阶段脚本。
 
-> **Loop9 主线的唯一总控层。**
+它负责回答这些问题：
 
-如果说某些 Skill、某些执行器、某些脚本负责“做一件具体的事”，
-那么 Dispatcher 负责的是：
+- 当前 repo 处在哪一阶段
+- 下一步该进入 Audit、Real-PoC、发布、Verify V4、报告还是恢复
+- 当前 blocker 是环境问题、验证问题、交付问题，还是运行载体问题
+- 某个阶段结束后，是否应该进入下一阶段，而不是把局部成功误当成整体完成
 
-- 看当前处在哪一阶段
-- 决定下一步该去哪个阶段
-- 在阶段之间分发
-- 在卡点出现时判断该回退到哪里
-- 把单 repo 的任务一路推进到闭环终点
+## 当前职责
 
-所以，Dispatcher 的意义，不是多一个命令，
-而是让整个工作流真正拥有“主线”。
+Dispatcher 当前承担七类职责：
 
----
+1. 检查 repo、run、observe、报告和队列状态。
+2. 根据状态分发到正确阶段。
+3. 读取阶段产物，而不是只发车不消费结果。
+4. 识别 env-side blocker，并把主线带回环境修复。
+5. 识别 transport/provider 失败，避免误判成 repo 语义完成。
+6. 控制并发和 launch guard，避免同类长任务互相踩踏。
+7. 把单 repo 从当前状态推进到验证收口、本地标准报告和最终本地复盘。
 
-## 二、为什么 Dispatcher 必须是主线总控
+## 当前阶段执行器
 
-复杂工作流真正难的地方，不是某个动作本身，
-而是这些问题：
+当前公开仓里，主线不再以旧的 `loop9-env-bootstrap` / `loop9-poc-verification` 名称作为 active 外部入口。那些名称只保留为历史背景或旧设计口径。
 
-- 当前到底进行到哪一步了
-- 现在该继续验证，还是该先修环境
-- 当前这个 blocker 属于哪一层
-- 某个子阶段跑完之后，整个任务下一步应该去哪
-- 单 repo 最后怎么走到真正闭环，而不是半路停在一个子步骤里
+当前 active 阶段是：
 
-如果没有 Dispatcher，这些问题就很容易被零散脚本各自处理，最终导致：
-- 主线不清楚
-- 回退逻辑混乱
-- 子阶段各说各话
-- 某个局部成功被误当成整体完成
+### Audit
 
-Dispatcher 的存在，就是为了避免这件事。
+- 入口 skill：`workspace/skills/loop9-wrapped-audit/SKILL.md`
+- wrapper：`workspace/Super8/.opencode/_scripts/loop9_authorized_review.py`
+- OpenCode command：`workspace/Super8/.opencode/command/loop9.md`
+- agents：`workspace/Super8/.opencode/agents/`
 
----
+Audit 负责把目标源码推进到标准 Loop9 audit run。
 
-## 三、Dispatcher 当前负责什么
+### Real-PoC 静态编写
 
-根据当前已经冻结的主线口径，Dispatcher 负责：
+- skill：`workspace/skills/loop9-real-poc/SKILL.md`
+- 入口：`workspace/skills/loop9-real-poc/scripts/run_loop9_real_poc.py`
+- 状态刷新：`workspace/skills/loop9-real-poc/scripts/refresh_real_poc_status.py`
 
-### 1. 检查
-先看当前 repo、当前轮次、当前产物、当前阶段状态是什么。
+Real-PoC 负责把完成的 audit run 转换为可复用 PoC Python 文件和迭代证据。
 
-### 2. 分发
-根据当前状态，把任务发到正确的下一阶段执行器，而不是让所有东西都自己乱跑。
+### 静态 Audit/PoC 产物上传
 
-### 3. 阶段判断
-它必须判断：
-- 现在该 env bootstrap
-- 还是该 preflight
-- 还是该 verification
-- 还是该进入报告与最终本地复盘
+- skill：`workspace/skills/loop9-feishu-publisher/SKILL.md`
+- 计划入口：`workspace/skills/loop9-feishu-publisher/scripts/build_publish_plan.py`
 
-### 4. 读取阶段产物
-Dispatcher 不只是发车，也要会读回阶段产物，判断这些产物意味着什么。
+这一段发布 raw audit / PoC 过程产物，不等于标准交付报告发布。
 
-### 5. 决定下一阶段
-某个阶段结束，不代表整个 repo 就结束。
-Dispatcher 必须接手判断下一步。
+### Verify V4 动态复现
 
-### 6. 环境问题回退
-如果 blocker 本质上是 env-side，Dispatcher 负责把主线带回环境修复，而不是让问题被某个局部阶段偷偷吞掉。
+- parent skill：`workspace/skills/loop9-verify-v4/SKILL.md`
+- child skill：`workspace/skills/loop9-verify-v4-env-bootstrap/SKILL.md`
+- child skill：`workspace/skills/loop9-verify-v4-finding-replay/SKILL.md`
+- child skill：`workspace/skills/loop9-verify-v4-distillation/SKILL.md`
+- 自动入口：`workspace/bin/loop9-verify-v4-auto-run.sh`
 
-### 7. 单 repo 闭环推进
-这是最核心的一条：
+Verify V4 是当前动态环境搭建、PoC replay、证据蒸馏和 repo-complete 收口的 active 语义入口。
 
-> Dispatcher 负责把单 repo 从当前状态一路推进到真正闭环，而不是只负责启动一次动作。
+### 本地标准交付报告
 
----
+- skill：`workspace/skills/loop9-delivery-reports/SKILL.md`
+- build bridge：`workspace/skills/loop9-delivery-reports/scripts/build_repo_delivery_reports.py`
+- final review bridge：`workspace/skills/loop9-delivery-reports/scripts/run_final_local_review_bridge.py`
 
-## 四、Dispatcher 调的不是“一个黑箱”，而是一组阶段执行器
+这一段生成本地标准报告树，并进入最终本地复盘。
 
-当前主线下，Dispatcher 调用的主要阶段执行器包括：
+### 动态复现后的标准报告上传
 
-### 1. `loop9-env-bootstrap`
-负责：
-- 环境搭建
-- 环境修复
-- 健康检查
-- handoff 输出
+- skill：`workspace/skills/loop9-feishu-delivery-publisher/SKILL.md`
+- 计划入口：`workspace/skills/loop9-feishu-delivery-publisher/scripts/build_report_publish_plan.py`
 
-### 2. `loop9-poc-verification-preflight`
-负责：
-- 发车前门禁
-- readiness check
-- 识别 env-side blocker
+这一段只上传标准交付报告树，不重新同步 raw audit artifacts。
 
-### 3. `loop9-poc-verification`
-负责：
-- 自动化 PoC 复现
-- 自动修 PoC
-- 固化证据
-- 收口结果
+## Publish 与 repo 闭环的边界
 
-### 4. repo follow-up 能力
-它属于 verification 主线内部子阶段，不是外部入口。
+原始 Dispatcher 口径里有一条正确边界：repo 主线闭环终点是验证收口、本地标准报告、最终本地复盘；publish 不应该和本地报告生成混成一个动作。
 
-### 5. `loop9-delivery-reports`
-负责：
-- 本地标准报告生成
+当前公开仓在此基础上做了更清楚的拆分：
 
-### 6. final local review
-负责：
-- 本地标准报告完成后的最终本地复盘
+- repo 语义闭环：由 Verify V4 / delivery reports / final local review 收口。
+- 对外同步闭环：由 `loop9-feishu-publisher` 和 `loop9-feishu-delivery-publisher` 两条独立 lane 处理。
 
-所以最重要的一点是：
+所以 LongWangClaw 的端到端链路包含两段上传，但 Dispatcher 不应把“生成标准报告”和“上传标准报告”写成同一个阶段。
 
-> 这些执行器各自做事，但 **主线 owner 不是它们**。
-> **主线 owner 是 Dispatcher。**
+## 环境问题回路
 
----
+如果动态复现或 preflight 判断 blocker 是 env-side：
 
-## 五、环境问题的正确回路
+1. 子阶段输出 dispatcher-readable 的 env repair / return-to-env 信号。
+2. Dispatcher 回到 `loop9-verify-v4-env-bootstrap` 或等效环境修复路径。
+3. 环境收口后再回到 finding replay。
+4. 不能把环境失败吞成 repo 失败。
 
-这是 Dispatcher 特别关键的一点。
+## 不应再误当主入口的旧口径
 
-如果 verification / preflight / follow-up 发现真实 blocker 是 env-side：
+以下名字只作为历史 lineage，不作为当前公开仓默认主入口：
 
-1. 不能停在 verification 自己那里
-2. 必须产出 **dispatcher-readable** 的 `return-to-env` / `env-revive` 信号
-3. 必须回到 Dispatcher
-4. 由 Dispatcher 再调 `loop9-env-bootstrap`
-5. 环境完成后，再由 Dispatcher 继续主线
+- `loop9_env_poc_dynamic_verify`
+- `loop9-env-bootstrap`
+- `loop9-poc-verification-preflight`
+- `loop9-poc-verification`
 
-这意味着：
+当前对外说明、doctor 和 AI 装配手册都应使用 `loop9-verify-v4` family 的 active 名称。
 
-> env-side 问题的真正中枢处理者，永远是 Dispatcher。
+## 当前一句话总结
 
-而不是某个 wrapper、某个局部执行器自己半路吸收。
-
----
-
-## 六、哪些东西不能再被误当成外部主入口
-
-一个必须明确纠偏的点是：
-
-### `loop9_env_poc_dynamic_verify`
-它：
-- **不是**外部主入口
-- **不是**用户侧统一入口
-- **不是**当前 canonical 的总入口
-
-它只能被视为：
-- 内部辅助组件
-- 兼容层
-- 或后续被 Dispatcher 吸收的薄 helper
-
-所以今后的对外文档、说明、Skill 口径里，不应再把它写成：
-- 统一入口
-- 默认总入口
-- slash 主入口
-
-这些都属于旧口径。
-
----
-
-## 七、单 repo 的正确闭环终点
-
-在当前主线口径下，Dispatcher 对单 repo 的正确闭环终点是：
-
-1. **验证收口**
-2. **本地标准报告**
-3. **最终本地复盘**
-
-这里特别要注意：
-
-### publish 不在这个 repo 闭环里
-publish 是后续独立流程。
-不应再把“本地标准报告生成”和“发布”混成一个动作。
-
----
-
-## 八、为什么这件事对龙王小龙虾很重要
-
-龙王小龙虾强调的是：
-- 主调度
-- 若干子阶段
-- 万能工作流
-- 持续推进复杂任务
-
-那就意味着它不能只有一堆会干活的子能力，
-还必须有一个明确的主线 owner。
-
-Dispatcher 正是这个主线 owner。
-
-没有它，整个系统更像：
-- 很多能力堆在一起
-- 每个子阶段各干各的
-- 某些局部行为像是自动化，但整体没有真正的主线控制
-
-有了它，龙王小龙虾才能更像：
-
-> 一个会判断当前阶段、会做阶段切换、会做环境回退、会把单 repo 一路推进到闭环的工作流系统。
-
----
-
-## 九、推荐的对外讲法
-
-### 稳妥版
-Dispatcher 是龙王小龙虾工作流主线的总控层，负责阶段判断、任务分发、环境回退与单 repo 的闭环推进。
-
-### 稍强一点的版本
-如果说 Skill 和执行器负责“把某一步做出来”，那么 Dispatcher 负责“决定整条路接下来怎么走”。
-
-### 更适合传播的一句话
-子阶段负责干活，Dispatcher 负责把活一路推进到结果。
-
----
-
-## 十、当前一句话总结
-
-> 在龙王小龙虾当前的体系里，**Dispatcher 是 Loop9 主线的唯一总控层**：它不是某个边角脚本，而是负责阶段判断、任务分发、环境回退和单 repo 闭环推进的主线 owner。
+Dispatcher 是 LongWangClaw 的主线推进层：子阶段负责干活，Dispatcher 负责阶段判断、回退、恢复、并发边界和闭环推进；上传被拆成独立发布 lane，不与本地 repo 语义闭环混在一起。

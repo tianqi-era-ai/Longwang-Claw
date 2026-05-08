@@ -45,6 +45,7 @@ class RenderedTemplate:
     placeholders: list[str]
     unresolved: list[str]
     sha256: str
+    mode: int = 0o600
 
 
 TEMPLATES: tuple[TemplateSpec, ...] = (
@@ -53,6 +54,13 @@ TEMPLATES: tuple[TemplateSpec, ...] = (
     TemplateSpec("codex", "templates/codex/config.toml.tpl", "paths.codexConfig"),
     TemplateSpec("cron", "templates/cron/jobs.json.tpl", "paths.cronJobs"),
     TemplateSpec("env", "templates/env/longwang.env.tpl", "paths.longwangEnvFile"),
+)
+
+OPENCODE_AGENT_FILES: tuple[str, ...] = (
+    "loop9-controller.md",
+    "loop9-refiner.md",
+    "loop9-solver.md",
+    "loop9-validator.md",
 )
 
 
@@ -180,9 +188,85 @@ def render_all(
                 placeholders=placeholders,
                 unresolved=unresolved,
                 sha256=digest,
+                mode=spec.mode,
             )
         )
+    if not names or "opencode-agents" in names:
+        rendered_items.extend(render_opencode_agents(profile, repo_root=repo_root, target_root=target_root))
     return rendered_items
+
+
+def _replace_frontmatter_scalar(text: str, key: str, value: str) -> str:
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].strip() != "---":
+        return text
+
+    end_idx = None
+    for idx in range(1, len(lines)):
+        if lines[idx].strip() == "---":
+            end_idx = idx
+            break
+    if end_idx is None:
+        return text
+
+    rendered = json.dumps(str(value), ensure_ascii=False)
+    replacement = f"{key}: {rendered}\n"
+    for idx in range(1, end_idx):
+        if re.match(rf"^\s*{re.escape(key)}\s*:", lines[idx]):
+            lines[idx] = replacement
+            return "".join(lines)
+
+    lines.insert(end_idx, replacement)
+    return "".join(lines)
+
+
+def render_opencode_agents(
+    profile: dict[str, Any],
+    *,
+    repo_root: Path = REPO_ROOT,
+    target_root: Path | None = None,
+) -> list[RenderedTemplate]:
+    source_root = repo_root / "workspace" / "Super8" / ".opencode" / "agents"
+    placeholders = ["models.opencode.agentModel", "models.opencode.variant", "paths.super8Root"]
+    unresolved: list[str] = []
+
+    try:
+        model = str(get_path(profile, "models.opencode.agentModel"))
+    except KeyError:
+        model = ""
+        unresolved.append("models.opencode.agentModel")
+    try:
+        variant = str(get_path(profile, "models.opencode.variant"))
+    except KeyError:
+        variant = ""
+        unresolved.append("models.opencode.variant")
+    try:
+        super8_root = target_for_profile_key(profile, "paths.super8Root", target_root=target_root)
+    except KeyError:
+        super8_root = Path("{{paths.super8Root}}")
+        unresolved.append("paths.super8Root")
+
+    items: list[RenderedTemplate] = []
+    for filename in OPENCODE_AGENT_FILES:
+        source = source_root / filename
+        content = source.read_text(encoding="utf-8")
+        if not unresolved:
+            content = _replace_frontmatter_scalar(content, "model", model)
+            content = _replace_frontmatter_scalar(content, "variant", variant)
+        digest = hashlib.sha256(content.encode("utf-8")).hexdigest()
+        items.append(
+            RenderedTemplate(
+                name=f"opencode-agent:{filename}",
+                template_path=source,
+                target_path=super8_root / ".opencode" / "agents" / filename,
+                content=content,
+                placeholders=placeholders,
+                unresolved=sorted(set(unresolved)),
+                sha256=digest,
+                mode=0o644,
+            )
+        )
+    return items
 
 
 def _is_placeholder_value(value: Any) -> bool:
@@ -237,11 +321,10 @@ def mask_sensitive(text: str) -> str:
 
 
 def write_rendered(items: list[RenderedTemplate]) -> None:
-    mode_by_name = {spec.name: spec.mode for spec in TEMPLATES}
     for item in items:
         item.target_path.parent.mkdir(parents=True, exist_ok=True)
         item.target_path.write_text(item.content, encoding="utf-8")
-        item.target_path.chmod(mode_by_name.get(item.name, 0o600))
+        item.target_path.chmod(item.mode)
 
 
 def parse_args() -> argparse.Namespace:
@@ -252,7 +335,12 @@ def parse_args() -> argparse.Namespace:
         help="Path to longwang.local.json. Defaults to local profile, then example profile.",
     )
     parser.add_argument("--repo-root", default=str(REPO_ROOT), help="LongWangClaw repo root.")
-    parser.add_argument("--only", action="append", choices=[spec.name for spec in TEMPLATES], help="Render only one template name. May be repeated.")
+    parser.add_argument(
+        "--only",
+        action="append",
+        choices=[spec.name for spec in TEMPLATES] + ["opencode-agents"],
+        help="Render only one template group. May be repeated.",
+    )
     parser.add_argument("--target-root", help="Rewrite absolute target paths under this directory for testing.")
     parser.add_argument("--write", action="store_true", help="Actually write rendered files. Default is dry-run.")
     parser.add_argument("--dry-run", action="store_true", help="Explicit dry-run; kept for readability because dry-run is already the default.")
