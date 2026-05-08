@@ -11,12 +11,6 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 
-# Personal local-use defaults requested by the user.
-# Intentionally NOT committed to git history unless the user explicitly asks.
-DEFAULT_FOFA_KEY = "17a769fba461f167271e33ae95313663"
-DEFAULT_HUNTER_API_KEY = "90245b4b52e0da12bd26da228b61103621ae66be2403281cbf83ed17f732dac4"
-DEFAULT_SHODAN_KEY = "PlfpBbn7mI1u3Yp8sPeAQy9kfOfxPeYs"
-
 DEFAULT_HUNTER_FIELDS = "url,web_title,company,number,component,updated_at"
 DEFAULT_FOFA_FIELDS = "host,ip,title,server,port,domain"
 WORKSPACE_ROOT = Path(__file__).resolve().parent.parent
@@ -40,12 +34,12 @@ def http_get(url: str, params: Dict[str, Any], timeout: int = 20) -> Dict[str, A
         }
 
 
-def resolve_secret(env_name: str, default_value: Optional[str]) -> Optional[str]:
-    return os.environ.get(env_name) or default_value
+def resolve_secret(env_name: str) -> Optional[str]:
+    return os.environ.get(env_name) or None
 
 
 def cmd_hunter(args: argparse.Namespace) -> int:
-    api_key = resolve_secret(args.api_key_env, DEFAULT_HUNTER_API_KEY)
+    api_key = resolve_secret(args.api_key_env)
     if not api_key:
         jprint({
             "status": "blocked",
@@ -90,7 +84,7 @@ def cmd_hunter(args: argparse.Namespace) -> int:
 
 
 def cmd_fofa_info(args: argparse.Namespace) -> int:
-    key = resolve_secret(args.key_env, DEFAULT_FOFA_KEY)
+    key = resolve_secret(args.key_env)
     if not key:
         jprint({
             "status": "blocked",
@@ -121,7 +115,7 @@ def cmd_fofa_info(args: argparse.Namespace) -> int:
 
 
 def cmd_fofa_stats(args: argparse.Namespace) -> int:
-    key = resolve_secret(args.key_env, DEFAULT_FOFA_KEY)
+    key = resolve_secret(args.key_env)
     if not key:
         jprint({
             "status": "blocked",
@@ -157,7 +151,7 @@ def cmd_fofa_stats(args: argparse.Namespace) -> int:
 
 
 def cmd_fofa_sample(args: argparse.Namespace) -> int:
-    key = resolve_secret(args.key_env, DEFAULT_FOFA_KEY)
+    key = resolve_secret(args.key_env)
     if not key:
         jprint({
             "status": "blocked",

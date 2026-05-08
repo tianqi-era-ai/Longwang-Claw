@@ -1,4 +1,57 @@
-__pycache__/
-*.pyc
+# OS / editor noise
 .DS_Store
+Thumbs.db
+.idea/
+.vscode/
 
+# Python
+__pycache__/
+*.py[cod]
+*.pyc.*
+*.pyd
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / JS
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Local env / secrets
+.env*
+openclaw.json
+.config/opencode/
+.codex/sessions/
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.secret
+
+# Runtime / generated
+reports/
+runs/
+targets/
+logs/
+memory/
+cron/runs/
+automation-state/
+browser/
+dist/
+build/
+coverage/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+
+# Local caches
+.cache/
+.tmp/
+.tmp-*/
