@@ -1,33 +1,91 @@
 {
+  "version": 1,
   "jobs": [
     {
       "name": "Loop9 Publish Dispatcher",
-      "schedule": {"kind": "cron", "expr": "15 * * * *", "tz": "Asia/Shanghai"},
+      "schedule": {
+        "kind": "cron",
+        "expr": "15,50 * * * *",
+        "tz": "Asia/Shanghai"
+      },
       "sessionTarget": "isolated",
       "enabled": false,
       "payload": {
         "kind": "agentTurn",
-        "message": "读取 ~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-publish.md，严格按其中流程运行一次。若没有可执行候选，输出 NO_REPLY。"
+        "message": "读取 ~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-publish.md，严格按其中流程运行一次。若没有可执行候选，输出具体原因和情况。",
+        "model": "openai/gpt-5.4",
+        "thinking": "high",
+        "timeoutSeconds": 3000
       }
     },
     {
       "name": "Loop9 Audit Dispatcher",
-      "schedule": {"kind": "cron", "expr": "30 * * * *", "tz": "Asia/Shanghai"},
+      "schedule": {
+        "kind": "cron",
+        "expr": "0,30 * * * *",
+        "tz": "Asia/Shanghai"
+      },
       "sessionTarget": "isolated",
       "enabled": false,
       "payload": {
         "kind": "agentTurn",
-        "message": "读取 ~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-audit.md，严格按其中流程运行一次。若没有可执行候选，输出 NO_REPLY。"
+        "message": "读取 ~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-audit.md，严格按其中流程运行一次。若没有可执行候选，输出具体原因和情况。",
+        "model": "openai/gpt-5.4",
+        "thinking": "high",
+        "timeoutSeconds": 3000
       }
     },
     {
       "name": "Loop9 Real-PoC Dispatcher",
-      "schedule": {"kind": "cron", "expr": "5,25,45 * * * *", "tz": "Asia/Shanghai"},
+      "schedule": {
+        "kind": "cron",
+        "expr": "5,25,45 * * * *",
+        "tz": "Asia/Shanghai"
+      },
       "sessionTarget": "isolated",
       "enabled": false,
       "payload": {
         "kind": "agentTurn",
-        "message": "读取 ~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-poc.md，严格按其中流程运行一次。若没有可执行候选，输出 NO_REPLY。"
+        "message": "读取 ~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-poc.md，严格按其中流程运行一次。若没有可执行候选，输出具体原因和情况。",
+        "model": "openai/gpt-5.4",
+        "thinking": "high",
+        "timeoutSeconds": 3000
+      }
+    },
+    {
+      "name": "Loop9 Delivery Report Publisher",
+      "schedule": {
+        "kind": "cron",
+        "expr": "35 * * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "enabled": false,
+      "payload": {
+        "kind": "agentTurn",
+        "message": "读取 ~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-delivery-publish.md，严格按其中流程运行一次。不要自行发送 Telegram/Feishu；让 cron delivery 负责发送最终状态。",
+        "model": "openai/gpt-5.4",
+        "thinking": "high",
+        "timeoutSeconds": 3000
+      }
+    },
+    {
+      "name": "Loop9 Verify V4 Auto Runner",
+      "description": "Run loop9-verify-v4-auto-run.sh hourly through isolated OpenClaw cron agentTurn; script owns prompt/lock/log behavior.",
+      "schedule": {
+        "kind": "cron",
+        "expr": "55 * * * *",
+        "tz": "Asia/Shanghai",
+        "staggerMs": 0
+      },
+      "sessionTarget": "isolated",
+      "enabled": false,
+      "payload": {
+        "kind": "agentTurn",
+        "message": "读取 ~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-verify-v4-launch.md，严格按其中流程运行一次。不要自行发送 Telegram/Feishu；让 cron delivery 负责发送最终状态。",
+        "model": "openai/gpt-5.4",
+        "thinking": "xhigh",
+        "timeoutSeconds": 7200
       }
     }
   ]

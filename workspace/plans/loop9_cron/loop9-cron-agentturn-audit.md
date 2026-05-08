@@ -14,9 +14,15 @@ cd ~/.openclaw/workspace
 ## 必须先读的材料（workspace 相对路径）
 
 1. `skills/loop9-wrapped-audit/SKILL.md`
-2. `reports/3个连续工作流，出现的一些问题/2026-03-15-P1-可复用执行模板与最小自动流程草案.md`
-3. `reports/3个连续工作流，出现的一些问题/2026-03-15-P1-discovery-阶段调用编排.md`
-4. `references/Address/SomeAddress.md`
+2. `skills/loop9-wrapped-audit/references/proactive-discovery-mode.md`
+3. `skills/loop9-wrapped-audit/references/query-source-format.md`
+4. `skills/loop9-wrapped-audit/references/candidate-source-format.md`
+5. `skills/loop9-wrapped-audit/references/candidate-discovery-queries.md`
+
+可选本机材料：
+- 如果本机有私有微步范围 / Address 参照，可以读取并使用。
+- 如果没有，不要因为缺少这些私有材料而失败；按公开 skill references 的硬门槛执行。
+- 不要引用或要求公开仓内不存在的 `reports/` 私有复盘材料。
 
 ## 当前业务目标（配置驱动版）
 
@@ -77,7 +83,7 @@ cd ~/.openclaw/workspace
    - GitCode 为次选，且必须防镜像误伤
    - GitHub 默认只保留窄例外通道
 4. discovery 阶段按这个顺序：
-   - 先读取微步范围 / Address 参照 / 当前本地已处理项目事实
+   - 先读取公开 discovery references、可选私有微步范围 / Address 参照、当前本地已处理项目事实
    - 再优先围绕 `gitee` 做第一轮候选发现
    - 再补 `gitcode` 候选，并检查镜像风险
    - 若前两层都没有明确合格候选，再看 `github` 例外通道

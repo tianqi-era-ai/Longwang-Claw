@@ -1,7 +1,7 @@
 ---
 description: "Loop9 controller (orchestrates solver/validator/refiner with sharded IO).  FIXED variant (force direct orchestration; no loop9 command/skill bounce)"
 mode: "primary"
-model: "xiaohongshu_codexfor/gpt-5.4"
+model: "openai/gpt-5.4"
 variant: "high"
 temperature: 0.2
 tools:

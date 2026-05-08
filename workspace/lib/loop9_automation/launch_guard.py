@@ -15,7 +15,7 @@ LOOP9_OBSERVE_DIR = SUPER8_ROOT / 'temp' / 'loop9-observe'
 REAL_POC_OBSERVE_DIR = SUPER8_ROOT / 'temp' / 'loop9-real-poc-observe'
 
 SWAP_RE = re.compile(r'used\s*=\s*([0-9.]+)([MG])', re.I)
-OPENCODE_PROMPT_RE = re.compile(r'(/Users/[^\s\'\"]+/(?:loop9-prompts|loop9-real-poc-prompts)/[^\s\'\"]+\.md)')
+OPENCODE_PROMPT_RE = re.compile(r'((?:~|/[^\s\'\"]+)(?:/[^\s\'\"]+)*/(?:loop9-prompts|loop9-real-poc-prompts)/[^\s\'\"]+\.md)')
 
 
 def _pid_is_alive(pid: int) -> bool:

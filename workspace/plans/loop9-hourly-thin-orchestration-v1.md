@@ -4,13 +4,15 @@
 
 只做一层**薄调度**，不做总控平台。
 
-每小时固定三个槽位：
+当前公开示例保留五条小时级 lane：
 
-- `15` 分：publish（飞书上传/同步）
-- `30` 分：audit（仓库审计）
-- `45` 分：poc（real-poc）
+- `0,30` 分：audit（仓库审计）
+- `5,25,45` 分：poc（real-poc）
+- `15,50` 分：publish（静态 Audit/PoC 产物上传/同步）
+- `35` 分：delivery report publisher（标准交付报告上传）
+- `55` 分：verify-v4 auto runner（动态环境搭建与 PoC 复现 carrier 启动）
 
-三类任务彼此独立，各自最多并发 `1`。
+各 lane 彼此独立，并发上限仍从 `workspace/config/loop9-dispatch.json` 读取。
 
 ## 硬约束
 

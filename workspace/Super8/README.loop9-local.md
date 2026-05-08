@@ -2,13 +2,12 @@
 
 ## 当前状态
 
-这台机器上已经完成：
+装配后的机器上需要完成：
 
-- Open Code 安装
-- Oh-My-Open Code 安装
-- `~/.config/opencode/` 备份配置恢复
+- OpenCode 安装
+- `~/.config/opencode/opencode.json` 由 LongWangClaw 模板渲染，或由用户本机自行配置
 - `Super8/.opencode/` 项目级 command / agents 接通
-- `/loop9` 原生命令模式完整链路验证通过
+- `/loop9` 原生命令模式可被 `loop9_authorized_review.py` 调起
 
 ## 推荐入口
 
@@ -25,7 +24,7 @@
 - 调用：
 
 ```bash
-opencode <Super8> --agent loop9-controller --prompt "请参照 '<prompt-file>'"
+opencode run --print-logs --command loop9 --agent loop9-controller "<prompt-text>"
 ```
 
 ## 实验入口
@@ -38,10 +37,10 @@ opencode <Super8> --agent loop9-controller --prompt "请参照 '<prompt-file>'"
 
 当前说明：
 
-- 该模式使用 `opencode run --dir <Super8> --command loop9 ...`
+- 该模式使用 `opencode run --command loop9 --agent loop9-controller ...`
 - 入口消息只传“读取并执行某个任务文件路径”，不直接展开文件正文
 - 这样可以尽量降低因关键词触发 analyze-mode / 预处理污染的概率
-- 但在当前 oh-my-opencode 环境下，这个模式仍然不如 agent 默认模式稳
+- wrapper 默认仍使用 command + fixed agent 的组合
 
 ## Prompt 输出位置
 

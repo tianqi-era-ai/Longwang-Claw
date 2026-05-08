@@ -1,0 +1,209 @@
+{
+  "schema": "longwang.config.v1",
+  "profileName": "example",
+  "paths": {
+    "openclawRoot": "~/.openclaw",
+    "workspaceRoot": "~/.openclaw/workspace",
+    "extensionsRoot": "~/.openclaw/extensions",
+    "super8Root": "~/.openclaw/workspace/Super8",
+    "targetsRoot": "~/.openclaw/workspace/targets",
+    "reportsRoot": "~/.openclaw/workspace/reports",
+    "runsRoot": "~/.openclaw/workspace/runs",
+    "memoryRoot": "~/.openclaw/workspace/memory",
+    "openclawConfig": "~/.openclaw/openclaw.json",
+    "opencodeConfig": "~/.config/opencode/opencode.json",
+    "codexConfig": "~/.codex/config.toml",
+    "cronJobs": "~/.openclaw/cron/jobs.json",
+    "longwangEnvFile": "~/.openclaw/workspace/config/longwang.env"
+  },
+  "commands": {
+    "python": "python3",
+    "bash": "bash",
+    "git": "git",
+    "node": "node",
+    "npm": "npm",
+    "opencode": "opencode",
+    "codex": "codex",
+    "tmux": "tmux",
+    "docker": "docker"
+  },
+  "models": {
+    "default": {
+      "provider": "openai",
+      "model": "gpt-5.4",
+      "qualified": "openai/gpt-5.4",
+      "thinking": "high",
+      "timeoutSeconds": 3000
+    },
+    "opencode": {
+      "provider": "openai",
+      "agentModel": "openai/gpt-5.4",
+      "variant": "high"
+    },
+    "codex": {
+      "provider": "openai",
+      "model": "gpt-5.4",
+      "reasoningEffort": "xhigh",
+      "serviceTier": "auto"
+    },
+    "providers": {
+      "openai": {
+        "name": "OpenAI",
+        "baseUrl": "https://api.openai.com/v1",
+        "apiKeyEnv": "OPENAI_API_KEY",
+        "apiKey": "CHANGE_ME_OPENAI_API_KEY",
+        "models": [
+          "gpt-5.4",
+          "gpt-5.4-high"
+        ]
+      }
+    }
+  },
+  "openclaw": {
+    "agentId": "main",
+    "workspace": "~/.openclaw/workspace",
+    "maxConcurrent": 2,
+    "subagentMaxConcurrent": 4,
+    "heartbeat": {
+      "enabled": true,
+      "every": "10m",
+      "target": "thread",
+      "includeReasoning": false
+    },
+    "gateway": {
+      "mode": "off",
+      "bind": "127.0.0.1",
+      "port": 17388,
+      "authToken": "CHANGE_ME_GATEWAY_TOKEN"
+    }
+  },
+  "opencode": {
+    "schema": "https://opencode.ai/config.json",
+    "plugins": [
+      "~/.openclaw/extensions/openclaw-lark"
+    ],
+    "disablePasteSummary": true
+  },
+  "codex": {
+    "trustedProjects": [
+      "~/.openclaw",
+      "~/.openclaw/workspace",
+      "~/.openclaw/workspace/Super8"
+    ],
+    "mcpFilesystemRoots": [
+      "~/.openclaw/workspace"
+    ],
+    "disableResponseStorage": true
+  },
+  "feishu": {
+    "enabled": false,
+    "domain": "https://open.feishu.cn",
+    "appId": "CHANGE_ME_FEISHU_APP_ID",
+    "appSecret": "CHANGE_ME_FEISHU_APP_SECRET",
+    "connectionMode": "oauth",
+    "requireMention": false,
+    "wiki": {
+      "internalSpaceName": "Loop9 审计交付中心（内部）",
+      "rawArtifactRootTitle": "00-总览与目录",
+      "deliveryReportNodeTitle": "06-标准交付报告"
+    },
+    "accounts": {
+      "default": {
+        "tenant": "CHANGE_ME_TENANT",
+        "openId": "CHANGE_ME_OPEN_ID"
+      }
+    }
+  },
+  "telegram": {
+    "enabled": false,
+    "botToken": "CHANGE_ME_TELEGRAM_BOT_TOKEN",
+    "announceChat": "CHANGE_ME_CHAT_ID"
+  },
+  "assetSearch": {
+    "fofaKeyEnv": "FOFA_KEY",
+    "fofaKey": "CHANGE_ME_FOFA_KEY",
+    "hunterKeyEnv": "HUNTER_API_KEY",
+    "hunterApiKey": "CHANGE_ME_HUNTER_API_KEY",
+    "shodanKeyEnv": "SHODAN_KEY",
+    "shodanKey": "CHANGE_ME_SHODAN_KEY"
+  },
+  "remoteRuntime": {
+    "enabled": false,
+    "kind": "tencent-cvm",
+    "label": "remote Docker/CVM",
+    "sshHost": "CHANGE_ME_CVM_HOST",
+    "sshUser": "root",
+    "sshPort": 22,
+    "sshKeyPath": "CHANGE_ME_SSH_KEY_PATH",
+    "runtimeRoot": "/root/openclaw-runtime",
+    "dockerRegistryPath": "/root/openclaw-runtime/docker-resource-registry.json",
+    "publicBaseUrl": "CHANGE_ME_PUBLIC_BASE_URL",
+    "defaultKeepHotRuntimeCount": 1,
+    "cleanupRetainHours": 12,
+    "proxy": {
+      "enabled": false,
+      "mode": "none",
+      "remoteLoopbackPort": 7890,
+      "localProxyUrl": "http://127.0.0.1:7890"
+    }
+  },
+  "cron": {
+    "enabled": false,
+    "timezone": "Asia/Shanghai",
+    "defaultAgentId": "main",
+    "feishuAgentId": "main-feishu",
+    "defaultSessionKey": "CHANGE_ME_OPENCLAW_SESSION_KEY",
+    "feishuSessionKey": "CHANGE_ME_FEISHU_SESSION_KEY",
+    "delivery": {
+      "mode": "none",
+      "channel": "CHANGE_ME_CHANNEL",
+      "auditTo": "CHANGE_ME_AUDIT_TOPIC",
+      "pocTo": "CHANGE_ME_POC_TOPIC",
+      "publishTo": "CHANGE_ME_PUBLISH_TOPIC",
+      "deliveryPublishTo": "CHANGE_ME_DELIVERY_TOPIC",
+      "verifyTo": "CHANGE_ME_VERIFY_TOPIC"
+    },
+    "jobs": {
+      "publish": {
+        "name": "Loop9 Publish Dispatcher",
+        "expr": "15,50 * * * *",
+        "promptFile": "~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-publish.md",
+        "model": "openai/gpt-5.4",
+        "thinking": "high",
+        "timeoutSeconds": 3000
+      },
+      "audit": {
+        "name": "Loop9 Audit Dispatcher",
+        "expr": "0,30 * * * *",
+        "promptFile": "~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-audit.md",
+        "model": "openai/gpt-5.4",
+        "thinking": "high",
+        "timeoutSeconds": 3000
+      },
+      "realPoc": {
+        "name": "Loop9 Real-PoC Dispatcher",
+        "expr": "5,25,45 * * * *",
+        "promptFile": "~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-poc.md",
+        "model": "openai/gpt-5.4",
+        "thinking": "high",
+        "timeoutSeconds": 3000
+      },
+      "deliveryReportPublisher": {
+        "name": "Loop9 Delivery Report Publisher",
+        "expr": "35 * * * *",
+        "promptFile": "~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-delivery-publish.md",
+        "model": "openai/gpt-5.4",
+        "thinking": "high",
+        "timeoutSeconds": 3000
+      },
+      "verifyV4AutoRunner": {
+        "name": "Loop9 Verify V4 Auto Runner",
+        "expr": "55 * * * *",
+        "promptFile": "~/.openclaw/workspace/plans/loop9_cron/loop9-cron-agentturn-verify-v4-launch.md",
+        "model": "openai/gpt-5.4",
+        "thinking": "xhigh",
+        "timeoutSeconds": 7200
+      }
+    }
+  }
+}

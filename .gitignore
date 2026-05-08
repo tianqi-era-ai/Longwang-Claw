@@ -22,15 +22,34 @@ pnpm-debug.log*
 
 # Local env / secrets
 .env*
+*.env
+*.env.local
 openclaw.json
 .config/opencode/
 .codex/sessions/
+.codex/
+credentials/
+identity/
+devices/
+delivery-queue/
+exec-approvals.json
+workspace/config/longwang.local.json
+workspace/config/longwang.env
+workspace/config/*.local.json
+workspace/config/*.secret.json
+workspace/config/*.env
+cron/jobs.json
 *.pem
 *.key
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
 *.crt
 *.p12
 *.pfx
 *.secret
+*.token
 
 # Runtime / generated
 reports/
@@ -41,6 +60,13 @@ memory/
 cron/runs/
 automation-state/
 browser/
+temp/
+tmp/
+tmp-*/
+workspace/tmp/
+workspace/tmp-*/
+workspace/temp/
+workspace/Super8/temp/
 dist/
 build/
 coverage/

@@ -42,7 +42,7 @@ RUN_ID_RE = re.compile(r'^\d{8}-\d{6}-.+')
 TARGET_PATH_PATTERNS = [
     re.compile(r'target_repo_path\s*[:：]\s*([^\s`]+)'),
     re.compile(r'审计目标源码根目录[：:]\s*`([^`]+)`'),
-    re.compile(r'(/Users/[^\s`]+/targets/[^\s`]+)'),
+    re.compile(r'((?:~|/[^\s`]+)(?:/[^\s`]+)*/targets/[^\s`]+)'),
 ]
 TARGET_NAME_PATTERNS = [
     re.compile(r'target_repo_name\s*[:：]\s*([A-Za-z0-9_.-]+)'),

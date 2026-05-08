@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from collections import Counter
@@ -9,7 +10,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-DEFAULT_REGISTRY = Path("/root/openclaw-runtime/docker-resource-registry.json")
+DEFAULT_REGISTRY = Path(
+    os.environ.get(
+        "LONGWANG_REMOTE_DOCKER_REGISTRY",
+        os.environ.get("OPENCLAW_DOCKER_REGISTRY", "/root/openclaw-runtime/docker-resource-registry.json"),
+    )
+)
 UTC = timezone.utc
 CLASS_ORDER = [
     "published-final",

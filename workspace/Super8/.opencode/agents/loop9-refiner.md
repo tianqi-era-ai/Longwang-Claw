@@ -1,7 +1,7 @@
 ---
 description: "Loop9 refiner (rewrite solution using validation report)"
 mode: "subagent"
-model: "xiaohongshu_codexfor/gpt-5.4"
+model: "openai/gpt-5.4"
 variant: "high"
 temperature: 0.3
 tools:

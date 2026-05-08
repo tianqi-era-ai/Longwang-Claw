@@ -17,7 +17,7 @@ Think of the repo as having two layers:
 These are usually the files you most want to read, edit, and intentionally commit.
 
 - `workspace/` — docs, helper files, selected hooks/plugins, and other durable workflow assets
-- `openclaw.json` — main OpenClaw config
+- `openclaw.json` — live local main OpenClaw config, never copied into the public repo
 - selected files under `agents/`, `cron/`, `devices/`, `identity/` when they represent meaningful durable state
 
 ### 2. Runtime / noisy / regenerable state
@@ -43,12 +43,17 @@ When talking about Git status, backup completeness, or whether something "was up
 5. Only then conclude whether something is intentionally excluded, accidentally omitted, or just not yet committed
 
 ## Important reminder
-A commit made from `workspace/` may still need files outside `workspace/` (like `openclaw.json`) if the change affected real system behavior.
+A live-local commit made from `workspace/` may still need files outside `workspace/` if the change affected real system behavior. The public LongWangClaw repo handles those files through `workspace/config/longwang.example.json` plus `templates/`, not by committing the real private config.
 
 ## Current known important files
 - In the **live local repo**, `openclaw.json` is the main config source of truth, but it is intentionally not part of this public repo.
 - In the **public Longwang-Claw repo**, start with:
+  - `README.md`
+  - `docs/端到端运行手册.md`
+  - `docs/配置与私有化指南.md`
   - `docs/给AI的装配说明.md`
+  - `scripts/render_longwang_config.py`
+  - `scripts/longwang_doctor.py`
   - `workspace/REPO-STRUCTURE.md`
   - `workspace/hooks/handlers/inject-runtime-default-model.js`
   - `workspace/plugins/star-office-sync/`

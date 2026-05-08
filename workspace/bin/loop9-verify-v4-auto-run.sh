@@ -3,8 +3,17 @@ set -euo pipefail
 
 umask 077
 
-WORKSPACE="${WORKSPACE:-$HOME/.openclaw/workspace}"
-CODEX_BIN="${CODEX_BIN:-codex}"
+WORKSPACE="${WORKSPACE:-${LONGWANG_WORKSPACE:-$HOME/.openclaw/workspace}}"
+LONGWANG_ENV_FILE="${LONGWANG_ENV_FILE:-$WORKSPACE/config/longwang.env}"
+if [ -f "$LONGWANG_ENV_FILE" ]; then
+  # shellcheck disable=SC1090
+  . "$LONGWANG_ENV_FILE"
+fi
+
+WORKSPACE="${WORKSPACE:-${LONGWANG_WORKSPACE:-$HOME/.openclaw/workspace}}"
+CODEX_BIN="${CODEX_BIN:-${LONGWANG_CODEX_BIN:-codex}}"
+REMOTE_RUNTIME_LABEL="${LONGWANG_REMOTE_RUNTIME_LABEL:-remote Docker/CVM}"
+REMOTE_RUNTIME_PROMPT="${LONGWANG_REMOTE_RUNTIME_PROMPT:-$REMOTE_RUNTIME_LABEL}"
 RUN_ROOT="$WORKSPACE/runs/loop9-verify-v4-auto"
 LOCK_DIR="$WORKSPACE/tmp/loop9-verify-v4-auto.lock"
 PID_FILE="$LOCK_DIR/pid"
@@ -13,11 +22,11 @@ RUN_STATE_NAME="run-state.md"
 RECOVERY_NOTE_NAME="01-recovery-note.md"
 
 DEFAULT_PROMPT="$(cat <<EOF
-请使用【$WORKSPACE/skills/loop9-verify-v4/SKILL.md】和【$WORKSPACE/skills/ai-native-development/SKILL.md】skill。自己选择 Repo，采用腾讯云搭建环境，完成完整的 repo-complete 流程。
+请使用【$WORKSPACE/skills/loop9-verify-v4/SKILL.md】和【$WORKSPACE/skills/ai-native-development/SKILL.md】skill。自己选择 Repo，采用 ${REMOTE_RUNTIME_PROMPT} 搭建环境，完成完整的 repo-complete 流程。
 硬约束：
 1. 某个 repo 一旦已经 truthfully 达到 \`repo-mainline-done\`，并且已有 \`98-delivery-bundle.manifest.json\`、\`99-最终本地复盘.*\`、以及显式 sedimentation 结果，后续 auto-run 默认必须切到下一个未完成 repo；不要把新的整点机会继续花在这个已完成 repo 的 live 复核、状态同步、验活上。
 2. 已完成 repo 默认最多只允许一次轻量 post-closure 验活，而且应尽量放在同一次 repo mainline run 内完成；后续周期性状态检查属于 monitor/heartbeat/status 工作，不属于新的 repo-complete 主线。
-3. 在共享腾讯云 CVM 上，默认只保留当前决定性 runtime 为热态；与当前主线无关的旧容器/旧运行态要及时释放。需要保留的旧结果优先保留为冷快照，不要长期维持为运行中容器占用内存。
+3. 在共享 ${REMOTE_RUNTIME_LABEL} 上，默认只保留当前决定性 runtime 为热态；与当前主线无关的旧容器/旧运行态要及时释放。需要保留的旧结果优先保留为冷快照，不要长期维持为运行中容器占用内存。
 4. 不要把已完成 repo 叙述成“这轮又自动选择了它”，除非这次是显式 reopen。
 5. 如果【${CURRENT_TASK_FILE}】显示已有同一未完成 auto task，则必须优先继续该任务，不得借 fresh auto-select 绕开它。
 EOF

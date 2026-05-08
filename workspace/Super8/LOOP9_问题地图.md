@@ -23,10 +23,9 @@
 
 这台机器上已经完成：
 
-- `opencode-ai 1.2.20`
-- `oh-my-opencode 3.10.0`
-- `~/.config/opencode/` 已从仓库备份恢复
-- `noop-lsp.js` 的旧绝对路径已修到本机 home 目录
+- OpenCode CLI 已安装
+- OpenCode 全局配置不从公开仓复制；应由 `workspace/config/longwang.local.json` 渲染或由用户本机自行维护
+- 项目级 `.opencode/` 资产已保留在公开仓
 - `Super8/.opencode/` 已被 Open Code 识别
 
 ### 2.2 Loop9 项目资产是存在且可加载的

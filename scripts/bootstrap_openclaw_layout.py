@@ -25,6 +25,7 @@ COPY_DIRS = (
     ("workspace/heartbeat", "heartbeat"),
     ("workspace/prompts", "prompts"),
     ("workspace/Super8/.opencode", "Super8/.opencode"),
+    ("workspace/Super8/工作流_提示词工程", "Super8/工作流_提示词工程"),
 )
 
 COPY_FILES = (

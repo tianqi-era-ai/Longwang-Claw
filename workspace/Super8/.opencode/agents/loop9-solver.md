@@ -1,7 +1,7 @@
 ---
 description: "Loop9 solver (generate initial solution with strict sharded IO)"
 mode: "subagent"
-model: "xiaohongshu_codexfor/gpt-5.4"
+model: "openai/gpt-5.4"
 variant: "high"
 temperature: 0.3
 tools:
