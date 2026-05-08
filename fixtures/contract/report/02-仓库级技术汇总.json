@@ -1,0 +1,14 @@
+{
+  "schema": "longwang.contract.technical_summary.v1",
+  "repo": {
+    "slug": "longwang-contract-fixture",
+    "display_name": "LongWangClaw Contract Fixture"
+  },
+  "findings": [
+    {
+      "finding_id": "LWCONTRACT-001",
+      "status": "contract-only",
+      "report_doc": "LWCONTRACT-001.md"
+    }
+  ]
+}

@@ -11,6 +11,14 @@ python3 scripts/render_longwang_config.py --profile workspace/config/longwang.lo
 python3 scripts/longwang_doctor.py --profile workspace/config/longwang.local.json --json
 ```
 
+如果没有授权目标，先跑合成契约夹具：
+
+```bash
+python3 scripts/longwang_doctor.py --profile workspace/config/longwang.example.json --contract-fixture fixtures/contract --json
+```
+
+这只验证最小文件契约和发布计划解析，不是真实漏洞 demo。
+
 用户填完 `workspace/config/longwang.local.json` 后，才允许：
 
 ```bash
@@ -41,6 +49,7 @@ python3 scripts/render_longwang_config.py --profile workspace/config/longwang.lo
 - 私钥、真实 token、真实 API key
 - 宣发/运营材料
 - 首发案例名单
+- `fixtures/contract/` 到 runtime targets
 
 私有配置统一从 `workspace/config/longwang.local.json` 渲染，或从本机环境变量注入。
 

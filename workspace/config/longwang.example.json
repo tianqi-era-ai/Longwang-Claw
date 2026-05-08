@@ -129,6 +129,7 @@
   },
   "remoteRuntime": {
     "enabled": false,
+    "activeProfile": "tencent-cvm",
     "kind": "tencent-cvm",
     "label": "remote Docker/CVM",
     "sshHost": "CHANGE_ME_CVM_HOST",
@@ -145,6 +146,32 @@
       "mode": "none",
       "remoteLoopbackPort": 7890,
       "localProxyUrl": "http://127.0.0.1:7890"
+    }
+  },
+  "runtimeProfiles": {
+    "local-docker": {
+      "enabled": false,
+      "kind": "local-docker",
+      "label": "local Docker",
+      "runtimeRoot": "~/.openclaw/workspace/runs/local-docker",
+      "dockerRegistryPath": "~/.openclaw/workspace/config/docker-resource-registry.json",
+      "publicBaseUrl": "http://127.0.0.1",
+      "defaultKeepHotRuntimeCount": 1,
+      "cleanupRetainHours": 12
+    },
+    "tencent-cvm": {
+      "enabled": false,
+      "kind": "tencent-cvm",
+      "label": "remote Docker/CVM",
+      "sshHost": "example-cvm-host.invalid",
+      "sshUser": "root",
+      "sshPort": 22,
+      "sshKeyPath": "~/.ssh/longwang-example",
+      "runtimeRoot": "/root/openclaw-runtime",
+      "dockerRegistryPath": "/root/openclaw-runtime/docker-resource-registry.json",
+      "publicBaseUrl": "https://example.invalid",
+      "defaultKeepHotRuntimeCount": 1,
+      "cleanupRetainHours": 12
     }
   },
   "cron": {

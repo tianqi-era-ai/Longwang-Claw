@@ -1,0 +1,9 @@
+{
+  "schema": "longwang.contract.real_poc_status.v1",
+  "workflow_completion": "contract-only",
+  "finding_count": 1,
+  "completed_files": [
+    "contract_probe_placeholder.py"
+  ],
+  "notes": "Synthetic contract fixture only; not a real PoC and not an exploit demo."
+}

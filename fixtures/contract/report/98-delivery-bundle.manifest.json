@@ -1,0 +1,24 @@
+{
+  "report_kind": "loop9-standard-delivery-report",
+  "publish_ready": true,
+  "repo": {
+    "slug": "longwang-contract-fixture",
+    "display_name": "LongWangClaw Contract Fixture"
+  },
+  "delivery_findings": [
+    {
+      "finding_id": "LWCONTRACT-001",
+      "title": "Contract placeholder finding",
+      "status": "contract-only",
+      "report_doc": "LWCONTRACT-001.md",
+      "poc_files": [
+        "contract_probe_placeholder.py"
+      ],
+      "http_dir": "http/LWCONTRACT-001"
+    }
+  ],
+  "final_local_review": {
+    "review_record_md": "99-最终本地复盘.md",
+    "review_record_json": "99-最终本地复盘.json"
+  }
+}

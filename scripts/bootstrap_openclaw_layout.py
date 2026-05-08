@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import shutil
 from pathlib import Path
 
@@ -44,22 +45,33 @@ COPY_FILES = (
 )
 
 
-def copy_dir(src: Path, dst: Path, dry_run: bool) -> int:
-    if not src.exists():
+def count_files(path: Path) -> int:
+    if not path.exists():
         return 0
+    if path.is_file():
+        return 1
+    return sum(1 for child in path.rglob("*") if child.is_file())
+
+
+def copy_dir(src: Path, dst: Path, dry_run: bool) -> dict[str, object]:
+    if not src.exists():
+        return {"source": str(src), "target": str(dst), "files": 0, "target_exists": dst.exists()}
+    count = count_files(src)
+    exists = dst.exists()
     if dry_run:
-        return sum(1 for path in src.rglob("*") if path.is_file())
+        return {"source": str(src), "target": str(dst), "files": count, "target_exists": exists}
     shutil.copytree(src, dst, dirs_exist_ok=True)
-    return sum(1 for path in src.rglob("*") if path.is_file())
+    return {"source": str(src), "target": str(dst), "files": count, "target_exists": exists}
 
 
-def copy_file(src: Path, dst: Path, dry_run: bool) -> int:
+def copy_file(src: Path, dst: Path, dry_run: bool) -> dict[str, object]:
     if not src.exists():
-        return 0
+        return {"source": str(src), "target": str(dst), "files": 0, "target_exists": dst.exists()}
+    exists = dst.exists()
     if not dry_run:
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
-    return 1
+    return {"source": str(src), "target": str(dst), "files": 1, "target_exists": exists}
 
 
 def main() -> int:
@@ -86,6 +98,11 @@ def main() -> int:
         action="store_true",
         help="Print what would be copied without writing files",
     )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit a machine-readable summary.",
+    )
     args = parser.parse_args()
 
     repo_root = Path(args.repo_root).expanduser().resolve()
@@ -97,33 +114,64 @@ def main() -> int:
     )
 
     copied = 0
-    print(f"repo_root={repo_root}")
-    print(f"openclaw_root={openclaw_root}")
-    print(f"workspace_root={workspace_root}")
-    print(f"mode={'dry-run' if args.dry_run else 'copy'}")
+    items: list[dict[str, object]] = []
+    mode = "dry-run" if args.dry_run else "copy"
+    if not args.json:
+        print(f"repo_root={repo_root}")
+        print(f"openclaw_root={openclaw_root}")
+        print(f"workspace_root={workspace_root}")
+        print(f"mode={mode}")
+        print("copy_policy=thin direct copy; existing target files under the listed public paths may be overwritten")
+        print("excluded=harness, fixtures, reports, runs, targets, logs, memory, secrets")
 
     for src_rel, dst_rel in ROOT_COPY_DIRS:
         src = repo_root / src_rel
         dst = openclaw_root / dst_rel
-        count = copy_dir(src, dst, args.dry_run)
+        result = copy_dir(src, dst, args.dry_run)
+        count = int(result["files"])
         copied += count
-        print(f"[root-dir] {src_rel} -> {dst_rel} ({count} files)")
+        items.append({"kind": "root-dir", "source": src_rel, "target": dst_rel, **result})
+        if not args.json:
+            exists_note = " target-exists" if result["target_exists"] else ""
+            print(f"[root-dir] {src_rel} -> {dst_rel} ({count} files){exists_note}")
 
     for src_rel, dst_rel in COPY_DIRS:
         src = repo_root / src_rel
         dst = workspace_root / dst_rel
-        count = copy_dir(src, dst, args.dry_run)
+        result = copy_dir(src, dst, args.dry_run)
+        count = int(result["files"])
         copied += count
-        print(f"[dir] {src_rel} -> {dst_rel} ({count} files)")
+        items.append({"kind": "dir", "source": src_rel, "target": dst_rel, **result})
+        if not args.json:
+            exists_note = " target-exists" if result["target_exists"] else ""
+            print(f"[dir] {src_rel} -> {dst_rel} ({count} files){exists_note}")
 
     for src_rel, dst_rel in COPY_FILES:
         src = repo_root / src_rel
         dst = workspace_root / dst_rel
-        count = copy_file(src, dst, args.dry_run)
+        result = copy_file(src, dst, args.dry_run)
+        count = int(result["files"])
         copied += count
-        print(f"[file] {src_rel} -> {dst_rel} ({count} file)")
+        items.append({"kind": "file", "source": src_rel, "target": dst_rel, **result})
+        if not args.json:
+            exists_note = " target-exists" if result["target_exists"] else ""
+            print(f"[file] {src_rel} -> {dst_rel} ({count} file){exists_note}")
 
-    print(f"total_files={copied}")
+    summary = {
+        "schema": "longwang.bootstrap.summary.v1",
+        "repoRoot": str(repo_root),
+        "openclawRoot": str(openclaw_root),
+        "workspaceRoot": str(workspace_root),
+        "mode": mode,
+        "copyPolicy": "thin direct copy of public workspace assets only",
+        "excluded": ["harness", "fixtures", "reports", "runs", "targets", "logs", "memory", "secrets"],
+        "totalFiles": copied,
+        "items": items,
+    }
+    if args.json:
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
+    else:
+        print(f"total_files={copied}")
     return 0
 
 

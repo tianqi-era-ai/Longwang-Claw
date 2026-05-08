@@ -116,10 +116,19 @@ def _toml_value(value: Any) -> str:
 
 
 def _format_value(data: dict[str, Any], filter_name: str, path_expr: str) -> str:
+    optional = path_expr.startswith("?")
+    if optional:
+        path_expr = path_expr[1:].strip()
     if filter_name == "env":
         value = os.environ.get(path_expr, "")
     else:
-        value = get_path(data, path_expr)
+        try:
+            value = get_path(data, path_expr)
+        except KeyError:
+            if optional:
+                value = ""
+            else:
+                raise
 
     if filter_name == "json":
         return json.dumps(value, ensure_ascii=False)

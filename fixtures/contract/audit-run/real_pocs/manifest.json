@@ -1,0 +1,13 @@
+{
+  "schema": "longwang.contract.real_pocs.v1",
+  "generated_by": "contract-fixture",
+  "shared_poc_dir": "fixtures/contract/audit-run/real_pocs",
+  "findings": [
+    {
+      "finding_id": "LWCONTRACT-001",
+      "mapped_file": "contract_probe_placeholder.py",
+      "status": "contract-only",
+      "last_round": 1
+    }
+  ]
+}

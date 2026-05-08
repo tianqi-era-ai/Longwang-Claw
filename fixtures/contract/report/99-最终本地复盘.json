@@ -1,0 +1,6 @@
+{
+  "schema": "longwang.contract.final_review.v1",
+  "status": "contract-only",
+  "publish_contract_ready": true,
+  "notes": "Synthetic fixture for doctor and publish-plan checks only."
+}

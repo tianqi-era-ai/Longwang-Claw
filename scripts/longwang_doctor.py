@@ -11,6 +11,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -81,6 +82,17 @@ PASSWORD_LITERAL_MARKER = "DXZN" "@"
 PRIVATE_BEGIN_MARKER = "-----BEGIN "
 PRIVATE_KEY_END_MARKER = "PRIVATE " "KEY-----"
 
+LAYER_CATEGORIES = {
+    "repo_static": {"layout", "cron", "opencode", "boundary", "security"},
+    "local_config": {"profile"},
+    "rendered_config": {"templates"},
+    "toolchain": {"command", "syntax"},
+    "contract_fixture": {"contract-fixture"},
+}
+
+REMOTE_RUNTIME_KINDS = {"tencent-cvm", "ssh-docker", "remote-docker"}
+LOCAL_RUNTIME_KINDS = {"local-docker"}
+
 
 @dataclass
 class Check:
@@ -93,9 +105,17 @@ class Check:
 
 
 class Doctor:
-    def __init__(self, repo_root: Path, profile_path: Path, *, skip_syntax: bool = False) -> None:
+    def __init__(
+        self,
+        repo_root: Path,
+        profile_path: Path,
+        *,
+        contract_fixture: Path | None = None,
+        skip_syntax: bool = False,
+    ) -> None:
         self.repo_root = repo_root
         self.profile_path = profile_path
+        self.contract_fixture = contract_fixture
         self.skip_syntax = skip_syntax
         self.checks: list[Check] = []
         self.lane_issues: dict[str, list[Check]] = {lane: [] for lane in LANES}
@@ -124,6 +144,7 @@ class Doctor:
         self.check_templates()
         self.check_cron_examples()
         self.check_opencode_assets()
+        self.check_contract_fixture()
         if not self.skip_syntax:
             self.check_syntax()
         self.check_repo_boundary_and_secrets()
@@ -143,14 +164,20 @@ class Doctor:
 
         placeholder_fields = collect_profile_placeholders(self.profile)
         if placeholder_fields:
-            self.add(
-                "warn",
-                "profile",
-                "placeholders",
-                f"profile still contains {len(placeholder_fields)} CHANGE_ME/TODO values",
-                lanes=["static_feishu_publish", "dynamic_verify", "delivery_feishu_publish", "cron"],
-                detail={"fields": placeholder_fields[:80]},
-            )
+            grouped: dict[tuple[str, ...], list[str]] = {}
+            for field_name in placeholder_fields:
+                lanes = tuple(self._placeholder_lanes(field_name))
+                grouped.setdefault(lanes, []).append(field_name)
+            for lanes, fields in sorted(grouped.items(), key=lambda item: (",".join(item[0]), item[1][0])):
+                check_name = "placeholders" if not lanes else "placeholders." + ".".join(lanes)
+                self.add(
+                    "warn",
+                    "profile",
+                    check_name,
+                    f"profile still contains {len(fields)} CHANGE_ME/TODO values",
+                    lanes=list(lanes),
+                    detail={"fields": fields[:80]},
+                )
 
         self._require_fields(
             "audit",
@@ -230,14 +257,62 @@ class Doctor:
                 "dynamic verification remote runtime is disabled in the profile",
                 lanes=["dynamic_verify"],
             )
+        else:
+            self._check_runtime_profile()
         if not self._bool_path("cron.enabled"):
             self.add("warn", "profile", "cron.enabled", "cron rendering is configured disabled", lanes=["cron"])
+
+    def _check_runtime_profile(self) -> None:
+        try:
+            runtime_kind = str(get_path(self.profile, "remoteRuntime.kind")).strip()
+        except Exception:
+            return
+        if runtime_kind in LOCAL_RUNTIME_KINDS:
+            self._require_fields(
+                "dynamic_verify",
+                [
+                    "commands.docker",
+                    "remoteRuntime.runtimeRoot",
+                    "remoteRuntime.dockerRegistryPath",
+                ],
+            )
+            self.add("ok", "profile", "remoteRuntime.kind", f"local Docker runtime selected: {runtime_kind}")
+            return
+        if runtime_kind in REMOTE_RUNTIME_KINDS:
+            self._require_fields(
+                "dynamic_verify",
+                [
+                    "remoteRuntime.sshHost",
+                    "remoteRuntime.sshUser",
+                    "remoteRuntime.sshKeyPath",
+                    "remoteRuntime.publicBaseUrl",
+                    "remoteRuntime.dockerRegistryPath",
+                ],
+            )
+            self.add("ok", "profile", "remoteRuntime.kind", f"SSH Docker runtime selected: {runtime_kind}")
+            return
+        self.add(
+            "warn",
+            "profile",
+            "remoteRuntime.kind",
+            f"unknown runtime kind: {runtime_kind}",
+            lanes=["dynamic_verify"],
+        )
 
     def _bool_path(self, field: str) -> bool:
         try:
             return bool(get_path(self.profile, field))
         except Exception:
             return False
+
+    def _placeholder_lanes(self, field_name: str) -> list[str]:
+        if field_name.startswith("feishu."):
+            return ["static_feishu_publish", "delivery_feishu_publish"]
+        if field_name.startswith("remoteRuntime."):
+            return ["dynamic_verify"]
+        if field_name.startswith("cron."):
+            return ["cron"]
+        return []
 
     def _value_missing(self, value: Any) -> bool:
         if value is None:
@@ -388,6 +463,132 @@ class Doctor:
             text = master.read_text(encoding="utf-8", errors="ignore")
             if any(marker in text for marker in LOCAL_MODEL_MARKERS):
                 self.add("blocked", "opencode", self.rel(master), "local/private model provider remains in master XML", lanes=["audit", "real_poc_static"])
+
+    def check_contract_fixture(self) -> None:
+        if self.contract_fixture is None:
+            return
+
+        fixture = self.contract_fixture
+        if not fixture.is_absolute():
+            fixture = self.repo_root / fixture
+        fixture = fixture.resolve()
+        if not fixture.exists():
+            self.add("blocked", "contract-fixture", "path", f"contract fixture not found: {fixture}", lanes=list(LANES))
+            return
+        if not fixture.is_dir():
+            self.add("blocked", "contract-fixture", "path", f"contract fixture is not a directory: {fixture}", lanes=list(LANES))
+            return
+
+        audit_run = fixture / "audit-run"
+        report_dir = fixture / "report"
+        required_paths = [
+            audit_run / "original_goal" / "part01.md",
+            audit_run / "shared_context" / "part01.md",
+            audit_run / "solution_v1" / "part01.md",
+            audit_run / "validation_report_v1" / "part01.md",
+            audit_run / "real_pocs" / "manifest.json",
+            audit_run / "real_pocs" / "real_poc_final_status.json",
+            report_dir / "00-索引.md",
+            report_dir / "01-仓库级中文交付报告.md",
+            report_dir / "02-仓库级技术汇总.md",
+            report_dir / "98-delivery-bundle.manifest.json",
+            report_dir / "99-最终本地复盘.md",
+        ]
+        missing = [self.rel(path) for path in required_paths if not path.exists()]
+        if missing:
+            self.add(
+                "blocked",
+                "contract-fixture",
+                "shape",
+                f"contract fixture missing required files: {len(missing)}",
+                lanes=list(LANES),
+                detail={"missing": missing},
+            )
+            return
+
+        temp_dir = Path(tempfile.mkdtemp(prefix="longwang-doctor-contract-"))
+        try:
+            try:
+                publish_plan = self._run_json_tool(
+                    [
+                        sys.executable,
+                        str(self.path("workspace/skills/loop9-feishu-publisher/scripts/build_publish_plan.py")),
+                        str(audit_run),
+                        "--project-title",
+                        "LongWangClaw Contract Fixture",
+                    ],
+                    cwd=temp_dir,
+                )
+                docs = publish_plan.get("docs") if isinstance(publish_plan, dict) else None
+                if not isinstance(docs, list) or len(docs) < 5:
+                    self.add(
+                        "blocked",
+                        "contract-fixture",
+                        "static-publish-plan",
+                        "static publish plan did not discover the minimum audit/real-poc docs",
+                        lanes=["static_feishu_publish", "real_poc_static"],
+                        detail={"doc_count": len(docs) if isinstance(docs, list) else None},
+                    )
+                else:
+                    self.add("ok", "contract-fixture", "static-publish-plan", f"static publish plan discovered {len(docs)} docs")
+            except Exception as exc:
+                self.add(
+                    "blocked",
+                    "contract-fixture",
+                    "static-publish-plan",
+                    str(exc),
+                    lanes=["static_feishu_publish", "real_poc_static"],
+                )
+
+            try:
+                delivery_plan = self._run_json_tool(
+                    [
+                        sys.executable,
+                        str(self.path("workspace/skills/loop9-feishu-delivery-publisher/scripts/build_report_publish_plan.py")),
+                        str(report_dir),
+                        "--project-title",
+                        "LongWangClaw Contract Fixture",
+                    ],
+                    cwd=temp_dir,
+                )
+                delivery_docs = delivery_plan.get("docs") if isinstance(delivery_plan, dict) else None
+                source = delivery_plan.get("source") if isinstance(delivery_plan, dict) else {}
+                if not isinstance(delivery_docs, list) or len(delivery_docs) < 6 or not source.get("publish_ready"):
+                    self.add(
+                        "blocked",
+                        "contract-fixture",
+                        "delivery-publish-plan",
+                        "delivery publish plan did not discover the minimum canonical report docs",
+                        lanes=["delivery_report", "delivery_feishu_publish"],
+                        detail={
+                            "doc_count": len(delivery_docs) if isinstance(delivery_docs, list) else None,
+                            "publish_ready": source.get("publish_ready"),
+                        },
+                    )
+                else:
+                    self.add("ok", "contract-fixture", "delivery-publish-plan", f"delivery publish plan discovered {len(delivery_docs)} docs")
+            except Exception as exc:
+                self.add(
+                    "blocked",
+                    "contract-fixture",
+                    "delivery-publish-plan",
+                    str(exc),
+                    lanes=["delivery_report", "delivery_feishu_publish"],
+                )
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+    def _run_json_tool(self, cmd: list[str], *, cwd: Path) -> dict[str, Any]:
+        result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, check=False)
+        if result.returncode != 0:
+            raise RuntimeError(f"{Path(cmd[1]).name} failed: {result.stderr.strip() or result.stdout.strip()}")
+        try:
+            payload = json.loads(result.stdout)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f"{Path(cmd[1]).name} did not emit JSON: {exc}") from exc
+        if not isinstance(payload, dict):
+            raise RuntimeError(f"{Path(cmd[1]).name} JSON root is not an object")
+        return payload
 
     def check_syntax(self) -> None:
         self._check_python_syntax()
@@ -544,10 +745,13 @@ class Doctor:
                     for item in issues
                 ],
             }
+        layers = self.layer_result(lanes)
         return {
             "schema": "longwang.doctor.v1",
             "repoRoot": str(self.repo_root),
             "profile": str(self.profile_path),
+            "contractFixture": str(self.contract_fixture) if self.contract_fixture else None,
+            "layers": layers,
             "lanes": lanes,
             "checks": [
                 {
@@ -562,6 +766,49 @@ class Doctor:
             ],
         }
 
+    def layer_result(self, lanes: dict[str, Any]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for layer, categories in LAYER_CATEGORIES.items():
+            items = [check for check in self.checks if check.category in categories]
+            result[layer] = {
+                "status": self._status_for_checks(items, empty="skipped"),
+                "issues": [
+                    {
+                        "status": item.status,
+                        "category": item.category,
+                        "name": item.name,
+                        "message": item.message,
+                    }
+                    for item in items
+                    if item.status != "ok"
+                ],
+            }
+        lane_statuses = [info["status"] for info in lanes.values()]
+        if any(status == "blocked" for status in lane_statuses):
+            lane_readiness_status = "blocked"
+        elif any(status == "partial" for status in lane_statuses):
+            lane_readiness_status = "partial"
+        else:
+            lane_readiness_status = "ready"
+        result["lane_readiness"] = {
+            "status": lane_readiness_status,
+            "issues": [
+                {"lane": lane, "status": info["status"], "issue_count": len(info["issues"])}
+                for lane, info in lanes.items()
+                if info["status"] != "ready"
+            ],
+        }
+        return result
+
+    def _status_for_checks(self, checks: list[Check], *, empty: str = "ready") -> str:
+        if not checks:
+            return empty
+        if any(item.status == "blocked" for item in checks):
+            return "blocked"
+        if any(item.status == "warn" for item in checks):
+            return "partial"
+        return "ready"
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Check LongWangClaw end-to-end assembly readiness.")
@@ -571,6 +818,11 @@ def parse_args() -> argparse.Namespace:
         help="Path to longwang.local.json. Defaults to local profile, then example profile.",
     )
     parser.add_argument("--repo-root", default=str(REPO_ROOT), help="LongWangClaw repo root.")
+    parser.add_argument(
+        "--contract-fixture",
+        default=str(REPO_ROOT / "fixtures" / "contract"),
+        help="Path to the synthetic contract fixture. Use an empty string to skip.",
+    )
     parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON.")
     parser.add_argument("--skip-syntax", action="store_true", help="Skip py_compile/bash/node syntax checks.")
     return parser.parse_args()
@@ -580,6 +832,11 @@ def print_human(result: dict[str, Any]) -> None:
     print("LongWangClaw doctor")
     print(f"repo={result['repoRoot']}")
     print(f"profile={result['profile']}")
+    print("")
+    print("Layer readiness:")
+    for layer, info in result["layers"].items():
+        issue_count = len(info.get("issues") or [])
+        print(f"- {layer}: {info['status']} ({issue_count} issue(s))")
     print("")
     print("Lane readiness:")
     for lane, info in result["lanes"].items():
@@ -600,7 +857,13 @@ def main() -> int:
     args = parse_args()
     repo_root = Path(args.repo_root).expanduser().resolve()
     profile_path = Path(args.profile).expanduser().resolve()
-    result = Doctor(repo_root, profile_path, skip_syntax=args.skip_syntax).run()
+    contract_fixture = Path(args.contract_fixture).expanduser() if args.contract_fixture else None
+    result = Doctor(
+        repo_root,
+        profile_path,
+        contract_fixture=contract_fixture,
+        skip_syntax=args.skip_syntax,
+    ).run()
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:

@@ -24,6 +24,8 @@ LongWangClaw/
   templates/
   scripts/
   docs/
+  fixtures/contract/
+  harness/
 ```
 
 装配到本机后对应：
@@ -45,7 +47,7 @@ LongWangClaw/
     Super8/工作流_提示词工程/
 ```
 
-不要创建 `src/` 重构版，不要新增 adapters，不要新增 targets/demo/CI/smoke。
+不要创建 `src/` 重构版，不要新增 adapters，不要新增 targets/demo/CI/smoke。`fixtures/contract/` 是合成契约夹具，只能用于 doctor 和发布计划解析，不得回填成 runtime target。
 
 ## 标准步骤
 
@@ -77,7 +79,25 @@ python3 scripts/render_longwang_config.py --profile workspace/config/longwang.lo
 python3 scripts/longwang_doctor.py --profile workspace/config/longwang.local.json --json
 ```
 
-6. 只按 doctor 的 lane 结果修补：
+6. 如果没有授权目标，先跑 contract fixture 契约检查：
+
+```bash
+python3 scripts/longwang_doctor.py \
+  --profile workspace/config/longwang.example.json \
+  --contract-fixture fixtures/contract \
+  --json
+```
+
+这只验证文件契约，不证明真实漏洞能力。
+
+7. 只按 doctor 的 layer 和 lane 结果修补：
+
+- `repo_static`
+- `local_config`
+- `rendered_config`
+- `toolchain`
+- `contract_fixture`
+- `lane_readiness`
 
 - `audit`
 - `real_poc_static`
@@ -87,13 +107,30 @@ python3 scripts/longwang_doctor.py --profile workspace/config/longwang.local.jso
 - `delivery_feishu_publish`
 - `cron`
 
-7. 用户确认 profile 填完后，才写本机配置：
+8. 用户确认 profile 填完后，才写本机配置：
 
 ```bash
 python3 scripts/render_longwang_config.py --profile workspace/config/longwang.local.json --write
 ```
 
 写入后，`~/.openclaw/workspace/Super8/.opencode/agents/*.md` 的 frontmatter 应与 `models.opencode.agentModel` 和 `models.opencode.variant` 一致。
+
+## 首跑验收
+
+真实首跑必须使用用户自己的授权目标。没有授权目标时，只能使用 `fixtures/contract/` 做契约检查。
+
+不要把 contract fixture 说成 demo、真实 target、真实 PoC 或真实漏洞报告。它只检查：
+
+- 静态发布计划能解析最小 Loop9 run。
+- 标准报告发布计划能解析最小报告树。
+- doctor 能输出 `contract_fixture=ready`。
+
+真实闭环验收步骤见：
+
+```text
+docs/首跑验收手册.md
+docs/闭环契约地图.md
+```
 
 ## 六段闭环怎么判断
 
@@ -137,7 +174,8 @@ python3 scripts/render_longwang_config.py --profile workspace/config/longwang.lo
 - `workspace/bin/loop9-verify-v4-auto-run.sh`
 - `codex`
 - `docker`
-- `remoteRuntime.*` 或等效本机 Docker runtime 配置
+- `remoteRuntime.kind=local-docker` 或 `remoteRuntime.kind=tencent-cvm/ssh-docker`
+- local Docker runtime 不要求 SSH/CVM 字段；远程 runtime 必须填写 SSH 与 publicBaseUrl
 
 ### delivery_report
 
@@ -193,6 +231,7 @@ templates/cron/jobs.json.tpl -> ~/.openclaw/cron/jobs.json
 - 不要复制 `reports/`、`runs/`、`targets/`、`memory/`、`logs/`。
 - 不要把 Feishu / Telegram / OpenAI / FOFA / Hunter / Shodan 的真实 key 写入仓库。
 - 不要新增 CI、smoke、demo、target-sync 作为本轮装配条件。
+- 不要把 `fixtures/contract/` 复制到 `~/.openclaw/workspace/targets`。
 - 不要把宣发/运营材料或首发案例名单补进仓库；这些只作为宣发侧人工选材。
 
 ## Harness
